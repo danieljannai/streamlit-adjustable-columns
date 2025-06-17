@@ -7,20 +7,29 @@ from streamlit_expandable_columns import expandable_columns
 st.set_page_config(page_title="Expandable Columns Demo", layout="wide")
 
 st.title("🎯 Streamlit Expandable Columns Demo")
-st.markdown("This component works exactly like `st.columns` but with a **draggable control bar** to adjust column widths!")
+st.markdown("""
+This component creates columns that work exactly like `st.columns` but with **resizable boundaries** 
+between the actual column content areas! Drag the resize handles to adjust column widths dynamically.
+""")
 
 st.divider()
 
 # Example 1: Basic usage with custom labels
-st.subheader("📊 Example 1: Custom Labels")
+st.subheader("📊 Example 1: Basic Resizable Columns")
+st.markdown("**Try dragging the resize handles above the columns to adjust their widths!**")
+
 st.code("""
 col1, col2, col3 = expandable_columns(3, labels=["📈 Charts", "📋 Data", "⚙️ Settings"])
 
 with col1:
     st.metric("Sales", "$1,234", "12%")
+    st.line_chart(data)
     
 col2.metric("Users", "5,678", "-2%")
-col3.metric("Revenue", "$9,012", "8%")
+col2.bar_chart(data)
+
+col3.metric("Revenue", "$9,012", "8%")  
+col3.area_chart(data)
 """)
 
 col1, col2, col3 = expandable_columns(3, labels=["📈 Charts", "📋 Data", "⚙️ Settings"], key="example1")
@@ -37,8 +46,10 @@ col3.area_chart(np.random.randn(20, 1).cumsum())
 
 st.divider()
 
-# Example 2: Dashboard layout with descriptive labels
-st.subheader("📈 Example 2: Dashboard Layout")
+# Example 2: Dashboard layout with different proportions
+st.subheader("📈 Example 2: Dashboard Layout with Custom Proportions")
+st.markdown("**The main area gets more space initially, but you can resize to your preference!**")
+
 st.code("""
 main, sidebar = expandable_columns([4, 1], labels=["🎛️ Main Dashboard", "🔧 Controls"])
 
@@ -97,12 +108,14 @@ with sidebar:
         show_trend = st.checkbox("Show trend lines", True)
         chart_type = st.radio("Chart style:", ["Line", "Bar", "Area"])
         
-    st.info("💡 **Tip:** Drag the control bar above to resize the dashboard layout!")
+    st.success("💡 **Tip:** Drag the resize handle to adjust the layout!")
 
 st.divider()
 
-# Example 3: New return_widths feature
-st.subheader("🔢 Example 3: Width Information")
+# Example 3: Width tracking feature
+st.subheader("🔢 Example 3: Width Information & Real-time Updates")
+st.markdown("**Track the current column widths as you resize them:**")
+
 st.code("""
 # Get both columns and their current widths
 result = expandable_columns([2, 1, 1], labels=["Main", "Side", "Tools"], return_widths=True)
@@ -119,14 +132,14 @@ cols = result['columns']
 current_widths = result['widths']
 
 # Show current widths
-st.info(f"**Current width ratios:** {[round(w, 2) for w in current_widths]} (try dragging to see changes)")
+st.info(f"**Current width ratios:** {[round(w, 2) for w in current_widths]} (resize to see live updates!)")
 
 cols[0].subheader("📄 Main Content")
 cols[0].write("This column adjusts its width based on your dragging. The ratios update in real-time!")
 cols[0].write("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
 
 cols[1].subheader("📋 Sidebar")
-cols[1].write("Sidebar content")
+cols[1].write("Sidebar content here")
 cols[1].button("Action", key="btn1")
 
 cols[2].subheader("🔧 Tools")
@@ -135,8 +148,10 @@ cols[2].button("Settings", key="btn2")
 
 st.divider()
 
-# Example 4: All parameters with labels
-st.subheader("🎨 Example 4: All Parameters with Labels")
+# Example 4: All parameters with real resizable containers
+st.subheader("🎨 Example 4: All Parameters with Resizable Content")
+st.markdown("**Resize the actual content containers with full `st.columns` parameter support:**")
+
 st.code("""
 cols = expandable_columns(
     spec=[2, 1, 1], 
@@ -150,12 +165,12 @@ cols = expandable_columns(
 # Parameter controls
 col_params1, col_params2 = st.columns(2)
 with col_params1:
-    gap = st.selectbox("Gap size:", ["small", "medium", "large"], index=2)
-    vertical_alignment = st.selectbox("Vertical alignment:", ["top", "center", "bottom"], index=1)
+    gap = st.selectbox("Gap size:", ["small", "medium", "large"], index=2, key="gap_select")
+    vertical_alignment = st.selectbox("Vertical alignment:", ["top", "center", "bottom"], index=1, key="valign_select")
 
 with col_params2:
-    border = st.checkbox("Show borders", value=True)
-    custom_labels = st.text_input("Custom labels (comma-separated):", "🎯 Main Content,📝 Notes,🔗 Links")
+    border = st.checkbox("Show borders", value=True, key="border_check")
+    custom_labels = st.text_input("Custom labels (comma-separated):", "🎯 Main Content,📝 Notes,🔗 Links", key="labels_input")
 
 # Parse custom labels
 try:
@@ -189,8 +204,10 @@ cols[2].button("Settings", key="btn4")
 
 st.divider()
 
-# Example 5: Content types example
-st.subheader("🏗️ Example 5: Content-Based Layout")
+# Example 5: Content-based layout with resizable containers
+st.subheader("🏗️ Example 5: Content-Based Resizable Layout")
+st.markdown("**Perfect for content that needs flexible space allocation:**")
+
 st.code("""
 content, media, meta = expandable_columns(
     [3, 2, 1], 
@@ -212,13 +229,15 @@ with content:
     # Sample Article Title
     
     This is the main content area where you would place your article text, 
-    blog posts, or primary information. The expandable columns allow you to 
-    adjust how much space is dedicated to different types of content.
+    blog posts, or primary information. The resizable columns allow you to 
+    adjust how much space is dedicated to different types of content by 
+    dragging the boundaries.
     
     ## Key Features
+    - **Resizable content containers** - not just control bars!
     - Custom column labels with emojis
-    - Draggable width controls
-    - Streamlit theme integration
+    - Draggable boundaries between actual content
+    - Streamlit theme integration  
     - All st.columns parameters supported
     - New `return_widths` parameter for getting current ratios
     """)
@@ -248,15 +267,15 @@ with meta:
     with st.expander("Tags"):
         st.write("• streamlit")
         st.write("• columns")
-        st.write("• ui")
+        st.write("• resizable")
     
-    st.button("Share", use_container_width=True)
+    st.button("Share", use_container_width=True, key="share_btn")
 
 st.divider()
 
-# Example 6: Multiple columns with different widths
-st.header("🔢 Example 6: Many Columns")
-st.write("Testing with 5 columns - great for dashboards with multiple widgets:")
+# Example 6: Many columns - testing minimum width constraints
+st.header("🔢 Example 6: Many Resizable Columns")
+st.write("Testing with 5 columns - each has a 6% minimum width constraint:")
 
 result6 = expandable_columns(
     spec=[3, 2, 1, 2, 1], 
@@ -271,7 +290,7 @@ widths6 = result6['widths']
 
 with cols6[0]:
     st.write("**Main Chart Area**")
-    st.info("📊 Primary visualizations go here")
+    st.info("📊 Primary visualizations")
     st.line_chart(np.random.randn(10, 1).cumsum())
     
 with cols6[1]:
@@ -298,24 +317,25 @@ st.info(f"**5-column layout widths:** {[f'{w:.2f}' for w in widths6]} - Try comp
 
 st.divider()
 
-# Instructions
-st.subheader("🎯 How to Use")
+# Instructions and features
+st.subheader("🎯 How to Use Resizable Columns")
 st.markdown("""
-### 🆕 **New Features:**
-- **Custom Labels**: Use the `labels` parameter to set descriptive titles for each column
-- **Theme Integration**: Automatically matches your Streamlit theme colors
-- **Width Information**: Use `return_widths=True` to get current column ratios
-- **Better Alignment**: Control bar now perfectly aligns with column boundaries
+### 🆕 **Key Features:**
+- **✨ Resizable Content Containers**: The actual column content is in resizable containers, not just a control bar!
+- **🏷️ Custom Labels**: Set descriptive titles for each column shown in the resize handles
+- **🎨 Theme Integration**: Automatically matches your Streamlit theme colors
+- **📊 Width Information**: Use `return_widths=True` to get current column ratios
+- **⚙️ Full Parameter Support**: All `st.columns` parameters (gap, alignment, border) are supported
 
 ### 📖 **Basic Usage:**
 ```python
-# With custom labels (default behavior)
+# Simple resizable columns (works just like st.columns)
 cols = expandable_columns(3, labels=["Main", "Sidebar", "Tools"])
 
-# Get width information
+# Get width information for dynamic layouts
 result = expandable_columns([2, 1], labels=["Content", "Sidebar"], return_widths=True)
 columns = result['columns']
-current_widths = result['widths']  # [2.0, 1.0] initially, [1.5, 1.5] after resizing
+current_widths = result['widths']  # [2.0, 1.0] initially, updates as you resize
 
 # With all parameters
 cols = expandable_columns(
@@ -329,22 +349,22 @@ cols = expandable_columns(
 ```
 
 ### 🎮 **How to Resize:**
-1. **Look for the control bar** above each set of expandable columns
-2. **Hover over the dividers** between segments - they'll highlight  
-3. **Click and drag** to resize the columns
-4. **Release** to apply the new layout
+1. **Look for the resize handles** that appear between the column content areas
+2. **Hover over the boundaries** between columns - you'll see resize cursors and visual indicators
+3. **Click and drag** the resize handles to adjust column widths
+4. **Release** to apply the new layout - changes persist across app reruns!
 
 ### ⚙️ **Supported Parameters:**
-- `spec`: Number of columns (int) or width ratios (list)
-- `labels`: Custom titles for each column (list of strings)  
-- `gap`: "small", "medium", or "large"
-- `vertical_alignment`: "top", "center", or "bottom"
-- `border`: True/False to show column borders
-- `return_widths`: True/False to return width information (optional)
-- `key`: Unique key for the component (optional)
+- `spec`: Number of columns (int) or width ratios (list) - same as `st.columns`
+- `labels`: Custom titles for each column shown in resize handles
+- `gap`: "small", "medium", or "large" - controls spacing between columns
+- `vertical_alignment`: "top", "center", or "bottom" - content alignment
+- `border`: True/False to show column borders  
+- `return_widths`: True/False to return width information
+- `key`: Unique key for the component (recommended for multiple instances)
 
-**Note:** All columns have a minimum width of 6% to ensure usability.
+**Note:** All columns have a minimum width of 6% to ensure usability, and changes persist in session state.
 """)
 
-st.success("🎉 The columns now have perfect alignment and the new return_widths feature!")
+st.success("🎉 Enjoy your new resizable column containers! The content is truly resizable, not just controlled by a bar above it.")
 st.markdown("Made with ❤️ using Streamlit") 

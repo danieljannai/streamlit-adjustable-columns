@@ -1,231 +1,220 @@
-# Streamlit Expandable Columns
+# 🎯 Streamlit Expandable Columns
 
-A Streamlit custom component that creates columns with adjustable widths. Users can drag column separators to resize columns, and the adjustments persist when other page elements change.
+[![PyPI version](https://badge.fury.io/py/streamlit-expandable-columns.svg)](https://badge.fury.io/py/streamlit-expandable-columns)
 
-![Demo](https://img.shields.io/badge/demo-available-brightgreen)
-![Python](https://img.shields.io/badge/python-3.7+-blue)
-![Streamlit](https://img.shields.io/badge/streamlit-1.0+-red)
+Create resizable columns in Streamlit! This component provides `st.columns` functionality with **draggable resize handles** that allow users to adjust column widths dynamically.
 
-## Features
+## ✨ Features
 
-- 🎛️ **Draggable column separators** - Click and drag to resize columns
-- 💾 **Persistent widths** - Column proportions are maintained when page updates
-- 📏 **Minimum width constraints** - Prevents columns from becoming too narrow
-- 📱 **Responsive design** - Works on different screen sizes
-- 🔢 **Multiple column configurations** - Support for 2, 3, 4+ columns
-- ⚙️ **Customizable** - Set initial widths and minimum width constraints
+- **🎯 Drop-in Replacement**: Works exactly like `st.columns` with the same API
+- **🖱️ Resizable Boundaries**: Drag handles between columns to adjust widths  
+- **💾 Persistent State**: Column widths persist across app reruns
+- **🎨 Theme Integration**: Automatically matches your Streamlit theme
+- **📱 Responsive**: Works on desktop and mobile devices
+- **⚙️ Full Compatibility**: Supports all `st.columns` parameters (gap, alignment, border)
+- **🔒 Minimum Width**: 6% minimum width constraint prevents unusably narrow columns
+- **📊 Width Tracking**: Optional `return_widths` parameter for dynamic layouts
 
-## Installation
+## 🚀 Quick Start
+
+### Installation
 
 ```bash
 pip install streamlit-expandable-columns
 ```
 
-## Quick Start
+### Basic Usage
 
 ```python
 import streamlit as st
 from streamlit_expandable_columns import expandable_columns
 
-st.title("My App with Resizable Columns")
-
-# Create expandable columns
-result = expandable_columns([1, 2, 1], key="my_columns")
-col1, col2, col3 = result['columns']
-
-# Use columns like normal Streamlit columns
-with col1:
-    st.header("Left Sidebar")
-    st.selectbox("Options:", ["A", "B", "C"])
-
-with col2:
-    st.header("Main Content")
-    st.write("This is the main content area")
-    st.line_chart([1, 2, 3, 4, 5])
-
-with col3:
-    st.header("Right Sidebar")
-    st.button("Action Button")
-
-# Access current column widths
-st.write(f"Current widths: {result['widths']}")
-```
-
-## Usage Examples
-
-### Basic Two-Column Layout
-
-```python
-result = expandable_columns([1, 1], key="two_columns")
-col1, col2 = result['columns']
+# Use exactly like st.columns - but with resize handles!
+col1, col2, col3 = expandable_columns(3, labels=["📊 Charts", "📋 Data", "⚙️ Settings"])
 
 with col1:
-    st.write("Left column content")
-
-with col2:
-    st.write("Right column content")
+    st.metric("Sales", "$1,234", "12%")
+    
+col2.write("This column can be resized!")
+col3.button("Settings")
 ```
 
-### Three Columns with Different Initial Widths
+## 📖 API Reference
+
+### `expandable_columns(spec, *, gap="small", vertical_alignment="top", border=False, labels=None, return_widths=False, key=None)`
+
+Creates resizable columns with draggable boundaries.
+
+#### Parameters
+
+- **`spec`** (int or list): Number of columns or width ratios
+  - `3` → Three equal columns  
+  - `[2, 1]` → Two columns with 2:1 ratio
+- **`gap`** (str): Space between columns - `"small"`, `"medium"`, or `"large"`
+- **`vertical_alignment`** (str): Content alignment - `"top"`, `"center"`, or `"bottom"`
+- **`border`** (bool): Show borders around columns
+- **`labels`** (list): Custom labels shown in resize handles
+- **`return_widths`** (bool): Return width information along with columns
+- **`key`** (str): Unique component key (recommended for multiple instances)
+
+#### Returns
+
+- **Default**: List of column containers (same as `st.columns`)
+- **With `return_widths=True`**: Dict with `{'columns': [...], 'widths': [...]}`
+
+## 🎮 How to Resize
+
+1. **Look for resize handles** above each set of expandable columns
+2. **Hover over the boundaries** between column areas - you'll see resize cursors
+3. **Click and drag** the handles to adjust column widths
+4. **Release** to apply changes - they persist across app reruns!
+
+## 📚 Examples
+
+### Dashboard Layout
 
 ```python
-# Create columns with 1:2:1 ratio
-result = expandable_columns([1, 2, 1], key="three_columns")
-col1, col2, col3 = result['columns']
+# Create a dashboard with resizable main content and sidebar
+main, sidebar = expandable_columns([4, 1], labels=["📊 Dashboard", "⚙️ Controls"])
+
+with main:
+    st.subheader("Analytics Overview")
+    col1, col2 = st.columns(2)
+    col1.metric("Revenue", "$45,231", "12%")
+    col2.metric("Users", "1,429", "3%")
+    st.line_chart(data)
+
+with sidebar:
+    st.selectbox("Time Period", ["1D", "1W", "1M"])
+    st.checkbox("Show Trends")
+    st.button("Refresh Data")
 ```
 
-### Advanced Configuration
+### Width Tracking
 
 ```python
-# Create columns with different initial widths
-# All columns automatically have a 6% minimum width
-result = expandable_columns([2, 3, 1], key="advanced_columns")
-col1, col2, col3 = result['columns']
-
-# Access current widths
+# Track column widths for dynamic layouts
+result = expandable_columns([2, 1], labels=["Content", "Sidebar"], return_widths=True)
+content, sidebar = result['columns']
 current_widths = result['widths']
-st.write(f"Current ratios: {current_widths}")
+
+st.info(f"Current ratios: {[f'{w:.1f}' for w in current_widths]}")
+
+with content:
+    st.write("Main content area")
+    
+with sidebar:
+    st.write("Adjustable sidebar")
 ```
 
-## API Reference
+### Multiple Column Sets
 
-### `expandable_columns(columns_config=None, key=None)`
+```python
+# Each set of columns needs a unique key
+cols1 = expandable_columns(3, labels=["A", "B", "C"], key="top")
+cols2 = expandable_columns([1, 2], labels=["Left", "Right"], key="bottom")
 
-Creates columns with adjustable widths. All columns have a minimum width of 6% to ensure usability.
+# First row
+cols1[0].metric("Metric 1", "100")
+cols1[1].metric("Metric 2", "200") 
+cols1[2].metric("Metric 3", "300")
 
-**Parameters:**
+# Second row  
+cols2[0].button("Action")
+cols2[1].write("Content area")
+```
 
-- `columns_config` (list, optional): 
-  - Initial width ratios (e.g., `[1, 2, 1]` for 3 columns with 1:2:1 ratio)
-  - **None** (default): Creates 2 equal columns `[1, 1]`
+### All Parameters
 
-- `key` (str, optional): Unique key for the component. Required for state persistence.
+```python
+columns = expandable_columns(
+    spec=[3, 2, 1],                    # Custom width ratios
+    gap="large",                       # Large spacing
+    vertical_alignment="center",       # Center-align content
+    border=True,                       # Show column borders
+    labels=["📊 Charts", "📋 Data", "⚙️ Tools"],  # Custom labels
+    return_widths=True,               # Get width info
+    key="advanced_example"            # Unique identifier
+)
 
-**Returns:**
+cols = columns['columns']
+widths = columns['widths']
+```
 
-Dictionary containing:
-- `'widths'`: Current width ratios of columns (list of numbers)
-- `'columns'`: List of Streamlit column objects for content placement
-- `'component_value'`: Raw component return value (for advanced use)
+## 🎨 Customization
 
-## Development
+### Column Labels
 
-### Setting up Development Environment
+Customize the labels shown in resize handles:
 
-1. Clone the repository:
+```python
+cols = expandable_columns(
+    3, 
+    labels=["📈 Analytics", "🛠️ Tools", "📱 Mobile"]
+)
+```
+
+### Responsive Layouts
+
+Use width information for responsive behavior:
+
+```python
+result = expandable_columns([2, 1], return_widths=True)
+main_col, side_col = result['columns']
+widths = result['widths']
+
+# Adapt content based on current column width
+if widths[0] > 3:  # Main column is wide
+    main_col.plotly_chart(fig, use_container_width=True)
+else:  # Main column is narrow
+    main_col.write("Chart too narrow - expand column to view")
+```
+
+## 🔧 Development
+
+### Setup
+
 ```bash
-git clone https://github.com/danieljannai/streamlit-expandable-columns.git
+# Clone the repository
+git clone https://github.com/your-username/streamlit-expandable-columns
 cd streamlit-expandable-columns
-```
 
-2. Create and activate a virtual environment:
-```bash
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
+# Install in development mode
+pip install -e .
 
-3. Install Python dependencies:
-```bash
-pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-4. Install frontend dependencies and start development server:
-```bash
+# Start the frontend development server
 cd streamlit_expandable_columns/frontend
 npm install
 npm start
-```
 
-5. In another terminal, activate venv and run the example:
-```bash
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# In another terminal, run Streamlit
 streamlit run example.py
 ```
 
-**Quick Setup with Script:**
+### Testing
+
 ```bash
-./dev_setup.sh  # Handles venv creation and all dependencies
+# Run the simple test
+streamlit run test_simple.py
+
+# Run the full example
+streamlit run example.py
 ```
 
-### Building for Production
-
-1. Build the frontend:
-```bash
-cd streamlit_expandable_columns/frontend
-npm run build
-```
-
-2. Update the `_RELEASE` flag in `__init__.py` to `True`
-
-3. Build and distribute:
-```bash
-python setup.py sdist bdist_wheel
-```
-
-## How It Works
-
-The component consists of:
-
-1. **Python Backend** (`streamlit_expandable_columns/__init__.py`):
-   - Interfaces with Streamlit's component system
-   - Manages column configuration and state
-   - Creates actual Streamlit columns with current widths
-
-2. **JavaScript Frontend** (`frontend/src/main.js`):
-   - Renders interactive column separators
-   - Handles drag-and-drop resize functionality
-   - Communicates width changes back to Python
-
-3. **Visual Interface** (`frontend/public/index.html`):
-   - Displays resizable column headers
-   - Provides visual feedback during resizing
-
-## Browser Compatibility
-
-- Chrome/Chromium 70+
-- Firefox 65+
-- Safari 12+
-- Edge 79+
-
-## Contributing
+## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-### Development Guidelines
-
-1. Follow PEP 8 for Python code
-2. Use ESLint configuration for JavaScript
-3. Add tests for new features
-4. Update documentation for API changes
-
-## License
+## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Changelog
-
-### v0.1.0
-- Initial release
-- Basic column resizing functionality
-- Support for 2-8 columns
-- Minimum width constraints
-- Responsive design
-
-## Support
-
-If you encounter any issues or have questions:
-
-1. Check the [Issues](https://github.com/danieljannai/streamlit-expandable-columns/issues) page
-2. Create a new issue with:
-   - Python version
-   - Streamlit version
-   - Browser information
-   - Minimal code example
-   - Error messages (if any)
-
-## Acknowledgments
+## 🙏 Acknowledgments
 
 - Built with [Streamlit](https://streamlit.io/)
-- Uses [streamlit-component-lib](https://github.com/streamlit/streamlit/tree/develop/component-lib/src/streamlit-component-lib)
-- Inspired by traditional desktop application splitter panels 
+- Inspired by the need for flexible column layouts in Streamlit applications
+- Thanks to the Streamlit community for feedback and suggestions
+
+---
+
+**Made with ❤️ for the Streamlit community** 

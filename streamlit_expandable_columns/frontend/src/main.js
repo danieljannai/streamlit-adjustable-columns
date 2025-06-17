@@ -2,15 +2,17 @@
 import { Streamlit } from "streamlit-component-lib"
 
 /**
- * The component's main function
+ * Creates resize handles that align with Streamlit columns below
  */
 function onRender(event) {
     const data = event.detail
     const config = data.args.config
     const widths = config.widths
     const labels = config.labels || widths.map((_, i) => `Col ${i+1}`)
+    const gap = config.gap || "small"
+    const border = config.border || false
     
-    // Hardcoded minimum width: 6% for all columns
+    // Minimum width constraint: 6% for all columns
     const MIN_WIDTH_RATIO = 0.06
     
     // Clear the container
@@ -24,7 +26,7 @@ function onRender(event) {
     let startWidths = []
     let resizingIndex = -1
     
-    // Get Streamlit theme colors with better defaults
+    // Get Streamlit theme colors
     const theme = {
         primary: getComputedStyle(document.documentElement).getPropertyValue('--primary-color') || '#ff6b6b',
         background: getComputedStyle(document.documentElement).getPropertyValue('--background-color') || '#ffffff',
@@ -33,152 +35,199 @@ function onRender(event) {
         border: getComputedStyle(document.documentElement).getPropertyValue('--border-color') || '#e6eaf1'
     }
     
-    // Create the control bar - match exact column layout with proper borders
-    const controlBar = document.createElement("div")
-    controlBar.style.cssText = `
+    // Define gap sizes (matching Streamlit's gap values)
+    const gapSizes = {
+        small: '0.5rem',
+        medium: '1rem', 
+        large: '1.5rem'
+    }
+    
+    // Create the resize handle container that mimics the column layout
+    const handleContainer = document.createElement("div")
+    handleContainer.className = "resize-handle-container"
+    handleContainer.style.cssText = `
         display: flex;
-        height: 24px;
         width: 100%;
-        margin: 0;
-        padding: 0;
-        background: ${theme.secondary};
-        border: 1px solid ${theme.border || theme.text + '20'};
-        border-radius: 4px;
-        overflow: hidden;
-        user-select: none;
+        height: 40px;
+        gap: ${gapSizes[gap]};
+        position: relative;
         box-sizing: border-box;
+        background: transparent;
+        margin-bottom: 10px;
+        align-items: center;
     `
     
-    // Calculate total width and account for gaps like Streamlit does
+    // Calculate total width for proportions
     const totalWidth = currentWidths.reduce((sum, w) => sum + w, 0)
     
-    // Create segments that exactly match Streamlit column proportions
+    // Create handle areas that match the column layout exactly
+    const handleAreas = []
     currentWidths.forEach((width, index) => {
-        // Column segment - adjust for gap spacing to align with actual column boundaries
-        const segment = document.createElement("div")
-        
-        // Calculate the effective width accounting for gaps
-        // Streamlit adds gaps between columns, so we need to adjust our segments
         const widthPercentage = (width / totalWidth) * 100
-        const gapAdjustment = index === 0 ? 0 : 0.5  // Small adjustment for gap alignment
-        const adjustedWidth = `calc(${widthPercentage}% - ${gapAdjustment}px)`
         
-        segment.style.cssText = `
-            width: ${adjustedWidth};
-            flex-shrink: 0;
+        // Create handle area that matches column width
+        const handleArea = document.createElement("div")
+        handleArea.className = "handle-area"
+        handleArea.style.cssText = `
+            flex: 0 0 ${widthPercentage}%;
             height: 100%;
-            background: ${theme.background};
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
-            color: ${theme.text};
-            font-weight: 600;
-            transition: background-color 0.15s ease;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
-            padding: 0 6px;
+            background: ${border ? 'rgba(230, 234, 241, 0.1)' : 'transparent'};
+            ${border ? 'border: 1px dashed rgba(230, 234, 241, 0.3);' : ''}
+            border-radius: 4px;
             box-sizing: border-box;
-            margin: 0;
-            outline: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
+            transition: all 0.15s ease;
         `
         
-        // Add borders to create proper segments - all segments get right border except container handles the outer border
-        if (index < currentWidths.length - 1) {
-            segment.style.borderRight = `1px solid ${theme.border || theme.text + '20'}`
-        }
+        // Add column label
+        const label = document.createElement("div")
+        label.textContent = labels[index]
+        label.style.cssText = `
+            font-size: 11px;
+            color: ${theme.text}60;
+            font-weight: 500;
+            opacity: 0.7;
+            pointer-events: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 90%;
+        `
         
-        segment.textContent = labels[index]
-        segment.title = labels[index] // Tooltip for long labels
+        handleArea.appendChild(label)
         
-        // Subtle hover effect - no gradients
-        segment.addEventListener('mouseenter', () => {
-            segment.style.background = theme.secondary
+        // Add hover effect for the handle area
+        handleArea.addEventListener('mouseenter', () => {
+            if (!isResizing) {
+                handleArea.style.background = border ? 'rgba(230, 234, 241, 0.2)' : 'rgba(230, 234, 241, 0.1)'
+                label.style.opacity = '1'
+            }
         })
-        segment.addEventListener('mouseleave', () => {
-            segment.style.background = theme.background
+        
+        handleArea.addEventListener('mouseleave', () => {
+            if (!isResizing) {
+                handleArea.style.background = border ? 'rgba(230, 234, 241, 0.1)' : 'transparent'
+                label.style.opacity = '0.7'
+            }
         })
         
-        // Add resize handle (except for last segment)
+        // Create resize handle (except for last area)
         if (index < currentWidths.length - 1) {
-            const handle = document.createElement("div")
-            handle.style.cssText = `
+            const resizeHandle = document.createElement("div")
+            resizeHandle.className = "resize-handle"
+            resizeHandle.style.cssText = `
                 position: absolute;
-                right: -2px;
-                top: 2px;
-                width: 4px;
-                height: calc(100% - 4px);
-                background: ${theme.text}40;
+                right: calc(-${gapSizes[gap]} / 2 - 3px);
+                top: 50%;
+                transform: translateY(-50%);
+                width: 6px;
+                height: 80%;
                 cursor: col-resize;
-                z-index: 10;
-                border-radius: 2px;
+                z-index: 1001;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 3px;
+                transition: all 0.15s ease;
+                background: transparent;
+            `
+            
+            // Visual indicator for the handle
+            const handleBar = document.createElement("div")
+            handleBar.className = "handle-bar"
+            handleBar.style.cssText = `
+                width: 2px;
+                height: 70%;
+                background: ${theme.text}40;
+                border-radius: 1px;
                 transition: all 0.15s ease;
             `
-            handle.dataset.index = index
-            handle.addEventListener('mousedown', startResize)
             
-            // Visual feedback
-            handle.addEventListener('mouseenter', () => {
-                handle.style.background = theme.primary
-                handle.style.width = '6px'
-                handle.style.right = '-3px'
-            })
-            handle.addEventListener('mouseleave', () => {
-                handle.style.background = `${theme.text}40`
-                handle.style.width = '4px'
-                handle.style.right = '-2px'
+            resizeHandle.appendChild(handleBar)
+            resizeHandle.dataset.index = index
+            
+            // Handle hover effects
+            resizeHandle.addEventListener('mouseenter', () => {
+                if (!isResizing) {
+                    handleBar.style.background = theme.primary
+                    handleBar.style.width = '4px'
+                    resizeHandle.style.background = `${theme.primary}15`
+                }
             })
             
-            segment.appendChild(handle)
+            resizeHandle.addEventListener('mouseleave', () => {
+                if (!isResizing) {
+                    handleBar.style.background = `${theme.text}40`
+                    handleBar.style.width = '2px'
+                    resizeHandle.style.background = 'transparent'
+                }
+            })
+            
+            // Handle mouse events for resizing
+            resizeHandle.addEventListener('mousedown', (e) => startResize(e, resizeHandle, handleBar))
+            
+            handleArea.appendChild(resizeHandle)
         }
         
-        controlBar.appendChild(segment)
+        handleAreas.push(handleArea)
+        handleContainer.appendChild(handleArea)
     })
     
-    container.appendChild(controlBar)
+    container.appendChild(handleContainer)
     
-    function startResize(e) {
+    function startResize(e, handle, handleBar) {
         isResizing = true
         startX = e.clientX
-        resizingIndex = parseInt(e.target.dataset.index)
+        resizingIndex = parseInt(handle.dataset.index)
         startWidths = [...currentWidths]
         
-        e.target.style.background = theme.primary
-        e.target.style.width = '6px'
-        e.target.style.right = '-3px'
-        document.addEventListener('mousemove', resize)
+        // Visual feedback
+        handleBar.style.background = theme.primary
+        handleBar.style.width = '4px'
+        handle.style.background = `${theme.primary}25`
+        
+        // Dim all labels during resize
+        handleAreas.forEach(area => {
+            const label = area.querySelector('div')
+            if (label) {
+                label.style.opacity = '0.3'
+                area.style.background = 'rgba(230, 234, 241, 0.05)'
+            }
+        })
+        
+        document.addEventListener('mousemove', handleResize)
         document.addEventListener('mouseup', stopResize)
         
+        // Prevent text selection during resize
+        document.body.style.userSelect = 'none'
+        document.body.style.cursor = 'col-resize'
         e.preventDefault()
     }
     
-    function resize(e) {
+    function handleResize(e) {
         if (!isResizing) return
         
         const deltaX = e.clientX - startX
-        const barWidth = controlBar.offsetWidth
+        const containerWidth = handleContainer.offsetWidth
         const totalCurrentWidth = currentWidths.reduce((sum, w) => sum + w, 0)
         
-        // Calculate change in ratio
-        const deltaRatio = (deltaX / barWidth) * totalCurrentWidth
+        // Calculate change in ratio based on container width
+        const deltaRatio = (deltaX / containerWidth) * totalCurrentWidth
         
         const leftIndex = resizingIndex
         const rightIndex = resizingIndex + 1
         
-        // Apply minimum constraints using the actual minimum width ratios
+        // Apply minimum constraints
         const leftMin = MIN_WIDTH_RATIO * totalCurrentWidth
         const rightMin = MIN_WIDTH_RATIO * totalCurrentWidth
         
         let newLeftWidth = Math.max(leftMin, startWidths[leftIndex] + deltaRatio)
         let newRightWidth = Math.max(rightMin, startWidths[rightIndex] - deltaRatio)
         
-        // Ensure we don't violate minimums with proper constraint handling
+        // Handle constraint violations
         if (newLeftWidth < leftMin) {
             newLeftWidth = leftMin
             newRightWidth = startWidths[rightIndex] + (startWidths[leftIndex] - leftMin)
@@ -188,43 +237,51 @@ function onRender(event) {
             newLeftWidth = startWidths[leftIndex] + (startWidths[rightIndex] - rightMin)
         }
         
-        // Final check: ensure both columns respect their minimums
-        newLeftWidth = Math.max(newLeftWidth, leftMin)
-        newRightWidth = Math.max(newRightWidth, rightMin)
-        
         currentWidths[leftIndex] = newLeftWidth
         currentWidths[rightIndex] = newRightWidth
         
-        // Update visual using the adjusted width calculation
-        updateBar()
+        // Update handle area widths immediately
+        updateHandleWidths()
     }
     
-    function updateBar() {
+    function updateHandleWidths() {
         const newTotal = currentWidths.reduce((sum, w) => sum + w, 0)
-        const segments = controlBar.children
         
-        for (let i = 0; i < segments.length; i++) {
-            // Recalculate adjusted width for each segment
-            const widthPercentage = (currentWidths[i] / newTotal) * 100
-            const gapAdjustment = i === 0 ? 0 : 0.5
-            const adjustedWidth = `calc(${widthPercentage}% - ${gapAdjustment}px)`
-            segments[i].style.width = adjustedWidth
-        }
+        handleAreas.forEach((area, index) => {
+            const widthPercentage = (currentWidths[index] / newTotal) * 100
+            area.style.flex = `0 0 ${widthPercentage}%`
+        })
     }
     
     function stopResize(e) {
         if (!isResizing) return
         
         isResizing = false
-        document.removeEventListener('mousemove', resize)
+        document.removeEventListener('mousemove', handleResize)
         document.removeEventListener('mouseup', stopResize)
         
-        // Reset handle appearance
-        const handles = controlBar.querySelectorAll('[data-index]')
+        // Reset body styles
+        document.body.style.userSelect = ''
+        document.body.style.cursor = ''
+        
+        // Reset all handle visuals
+        const handles = handleContainer.querySelectorAll('.resize-handle')
         handles.forEach(handle => {
-            handle.style.background = `${theme.text}40`
-            handle.style.width = '4px'
-            handle.style.right = '-2px'
+            const handleBar = handle.querySelector('.handle-bar')
+            if (handleBar) {
+                handleBar.style.background = `${theme.text}40`
+                handleBar.style.width = '2px'
+            }
+            handle.style.background = 'transparent'
+        })
+        
+        // Reset handle areas
+        handleAreas.forEach(area => {
+            const label = area.querySelector('div')
+            if (label) {
+                label.style.opacity = '0.7'
+                area.style.background = border ? 'rgba(230, 234, 241, 0.1)' : 'transparent'
+            }
         })
         
         // Send updated widths back to Streamlit
@@ -234,8 +291,53 @@ function onRender(event) {
         })
     }
     
-    // Set minimal height
-    Streamlit.setFrameHeight(30)
+    // Set compact frame height
+    Streamlit.setFrameHeight(60)
+    
+    // Add global styles for better integration
+    const style = document.createElement('style')
+    style.textContent = `
+        .resize-handle-container {
+            font-family: inherit;
+        }
+        
+        .handle-area {
+            min-width: 6% !important;
+        }
+        
+        .resize-handle:hover .handle-bar {
+            background: ${theme.primary} !important;
+            width: 4px !important;
+        }
+        
+        .resize-handle.resizing {
+            background: ${theme.primary}25 !important;
+        }
+        
+        .resize-handle.resizing .handle-bar {
+            background: ${theme.primary} !important;
+            width: 4px !important;
+        }
+        
+        /* Smooth transitions for handle area width changes */
+        .handle-area {
+            transition: flex 0.1s ease-out;
+        }
+        
+        /* Ensure clean appearance */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        #root {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+    `
+    document.head.appendChild(style)
 }
 
 // Attach our function to the onRender event

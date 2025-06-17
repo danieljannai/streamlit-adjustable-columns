@@ -1,6 +1,8 @@
 import os
 import streamlit as st
 import streamlit.components.v1 as components
+from typing import List, Union, Optional, Dict, Any
+import uuid
 
 # Create a _RELEASE constant. We'll set this to False while we're developing
 # the component, and True when we're ready to package and distribute it.
@@ -20,10 +22,10 @@ else:
     )
 
 def expandable_columns(spec=None, *, gap="small", vertical_alignment="top", border=False, labels=None, return_widths=False, key=None):
-    """Create columns with adjustable widths.
+    """Create columns with adjustable widths using resizable boundaries.
     
-    This function creates columns that work exactly like st.columns, but with a
-    draggable control bar above them to adjust their widths dynamically.
+    This function creates columns that work exactly like st.columns, but with 
+    draggable resize handles above them to adjust their widths dynamically.
     Each column has a minimum width of 6% to ensure usability.
     
     Parameters
@@ -40,7 +42,7 @@ def expandable_columns(spec=None, *, gap="small", vertical_alignment="top", bord
     border : bool, default False
         Whether to show a border around the column containers.
     labels : list of str, optional
-        Custom labels for each column shown in the control bar.
+        Custom labels for each column shown in the resize handles.
         If None, defaults to "Col 1", "Col 2", etc.
     return_widths : bool, default False
         If True, returns a dict with 'columns' and 'widths' keys.
@@ -110,26 +112,53 @@ def expandable_columns(spec=None, *, gap="small", vertical_alignment="top", bord
     elif len(labels) != len(widths):
         raise ValueError("labels must have the same length as the number of columns")
     
-    # Prepare configuration for the component
+    # Create unique identifier for this set of columns
+    if key is None:
+        unique_id = str(uuid.uuid4())[:8]
+    else:
+        unique_id = key
+    
+    # Create session state key for storing current widths
+    session_key = f"expandable_columns_widths_{unique_id}"
+    
+    # Initialize or get current widths from session state
+    if session_key not in st.session_state:
+        st.session_state[session_key] = widths.copy()
+    
+    current_widths = st.session_state[session_key]
+    
+    # Ensure we have the right number of widths (in case spec changed)
+    if len(current_widths) != len(widths):
+        current_widths = widths.copy()
+        st.session_state[session_key] = current_widths
+    
+    # Prepare configuration for the resizer component
     config = {
-        'widths': widths,
-        'labels': labels
+        'widths': current_widths,
+        'labels': labels,
+        'gap': gap,
+        'border': border
     }
     
-    # Call the component function to get resize handles
+    # Create the resize handles component
     component_value = _component_func(
         config=config,
-        key=key,
-        default={'widths': widths}
+        key=f"resizer_{unique_id}",
+        default={'widths': current_widths},
+        height=60  # Compact height for just the resize handles
     )
     
-    # Determine current widths (from component or default)
+    # Update current widths from component if it has been resized
     if component_value and 'widths' in component_value:
-        current_widths = component_value['widths']
-    else:
-        current_widths = widths
+        new_widths = component_value['widths']
+        # Only update session state if widths actually changed to avoid unnecessary reruns
+        if new_widths != current_widths:
+            st.session_state[session_key] = new_widths
+            current_widths = new_widths
+            # Force a rerun to update the column layout
+            st.rerun()
     
-    # Create Streamlit columns with current widths and all st.columns parameters
+    # Create the actual Streamlit columns with current widths
     # Ensure each column is at least 6% of total width
     MIN_WIDTH_RATIO = 0.06
     total_width = sum(current_widths)
