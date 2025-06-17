@@ -10,7 +10,6 @@ setup(
     name="streamlit-expandable-columns",
     version="0.1.0",
     author="Daniel Jannai Epstein",
-    author_email="daniel@example.com",
     description="A Streamlit custom component for creating columns with adjustable widths",
     long_description=long_description,
     long_description_content_type="text/markdown",
