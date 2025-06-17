@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Streamlit Expandable Columns</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .resizable-columns-container {
+            display: flex;
+            width: 100%;
+            height: 40px;
+            user-select: none;
+            position: relative;
+        }
+        
+        .column {
+            background: transparent;
+            border: 1px solid #e0e0e0;
+            position: relative;
+            min-width: 10%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .column:hover {
+            background: #f8f9fa;
+        }
+        
+        .resizer {
+            position: absolute;
+            top: 0;
+            right: -3px;
+            width: 6px;
+            height: 100%;
+            cursor: col-resize;
+            background: transparent;
+            z-index: 10;
+        }
+        
+        .resizer:hover {
+            background: #007bff;
+            opacity: 0.7;
+        }
+        
+        .resizer.active {
+            background: #007bff;
+            opacity: 1;
+        }
+        
+        .column-label {
+            pointer-events: none;
+            font-weight: 500;
+        }
+        
+        /* Hide the last resizer */
+        .column:last-child .resizer {
+            display: none;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .column {
+                font-size: 10px;
+            }
+            
+            .resizer {
+                width: 8px;
+                right: -4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script src="./main.js"></script>
+</body>
+</html> 
