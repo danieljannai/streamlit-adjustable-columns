@@ -8,18 +8,14 @@ function onRender(event) {
     const data = event.detail
     const config = data.args.config
     const widths = config.widths
-    const minWidths = config.min_widths || widths.map(() => 0.1)
+    const labels = config.labels || widths.map((_, i) => `Col ${i+1}`)
     
-    // Create the container
+    // Hardcoded minimum width: 6% for all columns
+    const MIN_WIDTH_RATIO = 0.06
+    
+    // Clear the container
     const container = document.getElementById("root")
     container.innerHTML = ""
-    
-    const columnsContainer = document.createElement("div")
-    columnsContainer.className = "resizable-columns-container"
-    
-    // Calculate percentages
-    const totalWidth = widths.reduce((sum, w) => sum + w, 0)
-    const percentages = widths.map(w => (w / totalWidth) * 100)
     
     // Store current state
     let currentWidths = [...widths]
@@ -28,47 +24,136 @@ function onRender(event) {
     let startWidths = []
     let resizingIndex = -1
     
-    // Create columns
-    widths.forEach((width, index) => {
-        const column = document.createElement("div")
-        column.className = "column"
-        column.style.width = `${percentages[index]}%`
+    // Get Streamlit theme colors with better defaults
+    const theme = {
+        primary: getComputedStyle(document.documentElement).getPropertyValue('--primary-color') || '#ff6b6b',
+        background: getComputedStyle(document.documentElement).getPropertyValue('--background-color') || '#ffffff',
+        secondary: getComputedStyle(document.documentElement).getPropertyValue('--secondary-background-color') || '#f0f2f6',
+        text: getComputedStyle(document.documentElement).getPropertyValue('--text-color') || '#262730',
+        border: getComputedStyle(document.documentElement).getPropertyValue('--border-color') || '#e6eaf1'
+    }
+    
+    // Create the control bar - match exact column layout with proper borders
+    const controlBar = document.createElement("div")
+    controlBar.style.cssText = `
+        display: flex;
+        height: 24px;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        background: ${theme.secondary};
+        border: 1px solid ${theme.border || theme.text + '20'};
+        border-radius: 4px;
+        overflow: hidden;
+        user-select: none;
+        box-sizing: border-box;
+    `
+    
+    // Calculate total width and account for gaps like Streamlit does
+    const totalWidth = currentWidths.reduce((sum, w) => sum + w, 0)
+    
+    // Create segments that exactly match Streamlit column proportions
+    currentWidths.forEach((width, index) => {
+        // Column segment - adjust for gap spacing to align with actual column boundaries
+        const segment = document.createElement("div")
         
-        // Add collapsed class if width is very small
-        if (width < 0.01) {
-            column.classList.add('collapsed')
+        // Calculate the effective width accounting for gaps
+        // Streamlit adds gaps between columns, so we need to adjust our segments
+        const widthPercentage = (width / totalWidth) * 100
+        const gapAdjustment = index === 0 ? 0 : 0.5  // Small adjustment for gap alignment
+        const adjustedWidth = `calc(${widthPercentage}% - ${gapAdjustment}px)`
+        
+        segment.style.cssText = `
+            width: ${adjustedWidth};
+            flex-shrink: 0;
+            height: 100%;
+            background: ${theme.background};
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: ${theme.text};
+            font-weight: 600;
+            transition: background-color 0.15s ease;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            padding: 0 6px;
+            box-sizing: border-box;
+            margin: 0;
+            outline: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        `
+        
+        // Add borders to create proper segments - all segments get right border except container handles the outer border
+        if (index < currentWidths.length - 1) {
+            segment.style.borderRight = `1px solid ${theme.border || theme.text + '20'}`
         }
         
-        const label = document.createElement("div")
-        label.className = "column-label"
-        label.textContent = `Col ${index + 1}`
-        column.appendChild(label)
+        segment.textContent = labels[index]
+        segment.title = labels[index] // Tooltip for long labels
         
-        // Add resizer (except for last column)
-        if (index < widths.length - 1) {
-            const resizer = document.createElement("div")
-            resizer.className = "resizer"
-            resizer.dataset.index = index
+        // Subtle hover effect - no gradients
+        segment.addEventListener('mouseenter', () => {
+            segment.style.background = theme.secondary
+        })
+        segment.addEventListener('mouseleave', () => {
+            segment.style.background = theme.background
+        })
+        
+        // Add resize handle (except for last segment)
+        if (index < currentWidths.length - 1) {
+            const handle = document.createElement("div")
+            handle.style.cssText = `
+                position: absolute;
+                right: -2px;
+                top: 2px;
+                width: 4px;
+                height: calc(100% - 4px);
+                background: ${theme.text}40;
+                cursor: col-resize;
+                z-index: 10;
+                border-radius: 2px;
+                transition: all 0.15s ease;
+            `
+            handle.dataset.index = index
+            handle.addEventListener('mousedown', startResize)
             
-            resizer.addEventListener("mousedown", startResize)
-            column.appendChild(resizer)
+            // Visual feedback
+            handle.addEventListener('mouseenter', () => {
+                handle.style.background = theme.primary
+                handle.style.width = '6px'
+                handle.style.right = '-3px'
+            })
+            handle.addEventListener('mouseleave', () => {
+                handle.style.background = `${theme.text}40`
+                handle.style.width = '4px'
+                handle.style.right = '-2px'
+            })
+            
+            segment.appendChild(handle)
         }
         
-        columnsContainer.appendChild(column)
+        controlBar.appendChild(segment)
     })
     
-    container.appendChild(columnsContainer)
+    container.appendChild(controlBar)
     
-    // Resize functionality
     function startResize(e) {
         isResizing = true
         startX = e.clientX
         resizingIndex = parseInt(e.target.dataset.index)
         startWidths = [...currentWidths]
         
-        e.target.classList.add("active")
-        document.addEventListener("mousemove", resize)
-        document.addEventListener("mouseup", stopResize)
+        e.target.style.background = theme.primary
+        e.target.style.width = '6px'
+        e.target.style.right = '-3px'
+        document.addEventListener('mousemove', resize)
+        document.addEventListener('mouseup', stopResize)
         
         e.preventDefault()
     }
@@ -77,55 +162,53 @@ function onRender(event) {
         if (!isResizing) return
         
         const deltaX = e.clientX - startX
-        const containerWidth = columnsContainer.offsetWidth
+        const barWidth = controlBar.offsetWidth
         const totalCurrentWidth = currentWidths.reduce((sum, w) => sum + w, 0)
         
-        // Calculate the change in ratio
-        const deltaRatio = (deltaX / containerWidth) * totalCurrentWidth
+        // Calculate change in ratio
+        const deltaRatio = (deltaX / barWidth) * totalCurrentWidth
         
-        // Update widths
-        const newWidths = [...startWidths]
         const leftIndex = resizingIndex
         const rightIndex = resizingIndex + 1
         
-        // Calculate minimum widths in ratio terms
-        const leftMinRatio = minWidths[leftIndex] * totalCurrentWidth
-        const rightMinRatio = minWidths[rightIndex] * totalCurrentWidth
+        // Apply minimum constraints using the actual minimum width ratios
+        const leftMin = MIN_WIDTH_RATIO * totalCurrentWidth
+        const rightMin = MIN_WIDTH_RATIO * totalCurrentWidth
         
-        // Apply changes with constraints
-        const newLeftWidth = Math.max(leftMinRatio, startWidths[leftIndex] + deltaRatio)
-        const newRightWidth = Math.max(rightMinRatio, startWidths[rightIndex] - deltaRatio)
+        let newLeftWidth = Math.max(leftMin, startWidths[leftIndex] + deltaRatio)
+        let newRightWidth = Math.max(rightMin, startWidths[rightIndex] - deltaRatio)
         
-        // Ensure the total doesn't change significantly
-        const totalChange = (newLeftWidth - startWidths[leftIndex]) + (newRightWidth - startWidths[rightIndex])
-        if (Math.abs(totalChange) > 0.001) {
-            // Adjust to maintain total
-            const adjustment = totalChange / 2
-            newWidths[leftIndex] = newLeftWidth - adjustment
-            newWidths[rightIndex] = newRightWidth + adjustment
-        } else {
-            newWidths[leftIndex] = newLeftWidth
-            newWidths[rightIndex] = newRightWidth
+        // Ensure we don't violate minimums with proper constraint handling
+        if (newLeftWidth < leftMin) {
+            newLeftWidth = leftMin
+            newRightWidth = startWidths[rightIndex] + (startWidths[leftIndex] - leftMin)
+        }
+        if (newRightWidth < rightMin) {
+            newRightWidth = rightMin
+            newLeftWidth = startWidths[leftIndex] + (startWidths[rightIndex] - rightMin)
         }
         
-        // Update current widths
-        currentWidths = newWidths
+        // Final check: ensure both columns respect their minimums
+        newLeftWidth = Math.max(newLeftWidth, leftMin)
+        newRightWidth = Math.max(newRightWidth, rightMin)
         
-        // Update visual representation
+        currentWidths[leftIndex] = newLeftWidth
+        currentWidths[rightIndex] = newRightWidth
+        
+        // Update visual using the adjusted width calculation
+        updateBar()
+    }
+    
+    function updateBar() {
         const newTotal = currentWidths.reduce((sum, w) => sum + w, 0)
-        const columns = columnsContainer.children
+        const segments = controlBar.children
         
-        for (let i = 0; i < currentWidths.length; i++) {
-            const percentage = (currentWidths[i] / newTotal) * 100
-            columns[i].style.width = `${percentage}%`
-            
-            // Add/remove collapsed class for very small columns
-            const isCollapsed = currentWidths[i] < 0.01
-            if (isCollapsed) {
-                columns[i].classList.add('collapsed')
-            } else {
-                columns[i].classList.remove('collapsed')
-            }
+        for (let i = 0; i < segments.length; i++) {
+            // Recalculate adjusted width for each segment
+            const widthPercentage = (currentWidths[i] / newTotal) * 100
+            const gapAdjustment = i === 0 ? 0 : 0.5
+            const adjustedWidth = `calc(${widthPercentage}% - ${gapAdjustment}px)`
+            segments[i].style.width = adjustedWidth
         }
     }
     
@@ -133,13 +216,16 @@ function onRender(event) {
         if (!isResizing) return
         
         isResizing = false
-        const activeResizer = document.querySelector(".resizer.active")
-        if (activeResizer) {
-            activeResizer.classList.remove("active")
-        }
+        document.removeEventListener('mousemove', resize)
+        document.removeEventListener('mouseup', stopResize)
         
-        document.removeEventListener("mousemove", resize)
-        document.removeEventListener("mouseup", stopResize)
+        // Reset handle appearance
+        const handles = controlBar.querySelectorAll('[data-index]')
+        handles.forEach(handle => {
+            handle.style.background = `${theme.text}40`
+            handle.style.width = '4px'
+            handle.style.right = '-2px'
+        })
         
         // Send updated widths back to Streamlit
         Streamlit.setComponentValue({
@@ -148,8 +234,8 @@ function onRender(event) {
         })
     }
     
-    // Set initial height
-    Streamlit.setFrameHeight(50)
+    // Set minimal height
+    Streamlit.setFrameHeight(30)
 }
 
 // Attach our function to the onRender event

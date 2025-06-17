@@ -74,29 +74,29 @@ result = expandable_columns([1, 2, 1], key="three_columns")
 col1, col2, col3 = result['columns']
 ```
 
-### Advanced Configuration with Minimum Widths
+### Advanced Configuration
 
 ```python
-config = {
-    'widths': [2, 3, 1],           # Initial width ratios
-    'min_widths': [0.2, 0.2, 0.2]  # Minimum 20% width for each column
-}
-
-result = expandable_columns(config, key="advanced_columns")
+# Create columns with different initial widths
+# All columns automatically have a 6% minimum width
+result = expandable_columns([2, 3, 1], key="advanced_columns")
 col1, col2, col3 = result['columns']
+
+# Access current widths
+current_widths = result['widths']
+st.write(f"Current ratios: {current_widths}")
 ```
 
 ## API Reference
 
 ### `expandable_columns(columns_config=None, key=None)`
 
-Creates columns with adjustable widths.
+Creates columns with adjustable widths. All columns have a minimum width of 6% to ensure usability.
 
 **Parameters:**
 
-- `columns_config` (list or dict, optional): 
-  - **List**: Initial width ratios (e.g., `[1, 2, 1]` for 3 columns with 1:2:1 ratio)
-  - **Dict**: Configuration with `'widths'` and optional `'min_widths'` keys
+- `columns_config` (list, optional): 
+  - Initial width ratios (e.g., `[1, 2, 1]` for 3 columns with 1:2:1 ratio)
   - **None** (default): Creates 2 equal columns `[1, 1]`
 
 - `key` (str, optional): Unique key for the component. Required for state persistence.
