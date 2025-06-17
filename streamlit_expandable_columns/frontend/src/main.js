@@ -34,6 +34,11 @@ function onRender(event) {
         column.className = "column"
         column.style.width = `${percentages[index]}%`
         
+        // Add collapsed class if width is very small
+        if (width < 0.01) {
+            column.classList.add('collapsed')
+        }
+        
         const label = document.createElement("div")
         label.className = "column-label"
         label.textContent = `Col ${index + 1}`
@@ -113,6 +118,14 @@ function onRender(event) {
         for (let i = 0; i < currentWidths.length; i++) {
             const percentage = (currentWidths[i] / newTotal) * 100
             columns[i].style.width = `${percentage}%`
+            
+            // Add/remove collapsed class for very small columns
+            const isCollapsed = currentWidths[i] < 0.01
+            if (isCollapsed) {
+                columns[i].classList.add('collapsed')
+            } else {
+                columns[i].classList.remove('collapsed')
+            }
         }
     }
     

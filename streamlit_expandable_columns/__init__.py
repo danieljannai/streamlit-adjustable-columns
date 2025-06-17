@@ -71,8 +71,11 @@ def expandable_columns(columns_config=None, key=None):
     else:
         current_widths = config['widths']
     
-    # Create Streamlit columns
-    st_columns = st.columns(current_widths)
+    # Create Streamlit columns - handle collapsed columns (width ≈ 0)
+    # Streamlit doesn't accept 0 or negative widths, so we use a tiny positive value
+    MIN_COLUMN_WIDTH = 0.001
+    streamlit_widths = [max(w, MIN_COLUMN_WIDTH) for w in current_widths]
+    st_columns = st.columns(streamlit_widths)
     
     return {
         'widths': current_widths,

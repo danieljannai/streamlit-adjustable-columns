@@ -118,6 +118,64 @@ with col3:
 
 st.markdown("---")
 
+# Example 5: Collapsible sidebar with zero minimum width
+st.header("Example 5: Collapsible Sidebar")
+st.markdown("**The left and right sidebars can be completely collapsed** (min_width = 0). Try dragging the separators all the way to collapse them!")
+
+collapsible_config = {
+    'widths': [1, 3, 1],
+    'min_widths': [0, 0.15, 0],  # Left and right columns can collapse to 0 width
+}
+
+result5 = expandable_columns(collapsible_config, key="collapsible_columns")
+col1, col2, col3 = result5['columns']
+
+with col1:
+    st.subheader("📋 Collapsible Sidebar")
+    st.write("This sidebar can be completely hidden!")
+    st.selectbox("Filter by:", ["All", "Active", "Inactive"], key="filter1")
+    st.checkbox("Show advanced options", key="advanced_opts")
+    
+    if st.button("🔄 Reset Layout", key="reset_btn"):
+        st.rerun()
+
+with col2:
+    st.subheader("📊 Main Dashboard")
+    st.write("This is the main content area that expands when the sidebar is collapsed.")
+    
+    # Sample data
+    import pandas as pd
+    import numpy as np
+    
+    # Create sample chart data
+    chart_data = pd.DataFrame(
+        np.random.randn(20, 3),
+        columns=['Series A', 'Series B', 'Series C']
+    )
+    
+    st.area_chart(chart_data)
+    
+    col2_1, col2_2 = st.columns(2)
+    with col2_1:
+        st.metric("Total Users", "1,234", "12%")
+        st.metric("Revenue", "$56,789", "8%")
+    with col2_2:
+        st.metric("Conversion Rate", "3.2%", "-0.3%")
+        st.metric("Active Sessions", "89", "15%")
+
+with col3:
+    st.subheader("🔧 Tools")
+    st.write("Tool panel with minimum 15% width.")
+    st.button("🔄 Refresh Data", key="refresh_btn")
+    st.button("📥 Export", key="export_btn")
+    st.button("⚙️ Settings", key="settings_btn")
+    
+    st.markdown("**Status:**")
+    st.success("✅ System Online")
+    st.info("🔄 Last updated: 2 min ago")
+
+st.markdown("---")
+
 # Display current column widths
 st.header("Column Width Information")
 st.markdown("Current column widths (as ratios):")
@@ -130,13 +188,18 @@ with col_info1:
     
     st.subheader("Example 2 - Three Columns")  
     st.write(f"Widths: {result2['widths']}")
-
-with col_info2:
+    
     st.subheader("Example 3 - Four Columns")
     st.write(f"Widths: {result3['widths']}")
-    
+
+with col_info2:
     st.subheader("Example 4 - Advanced")
     st.write(f"Widths: {result4['widths']}")
+    
+    st.subheader("Example 5 - Collapsible")
+    st.write(f"Widths: {result5['widths']}")
+    if result5['widths'][0] < 0.01:  # First column is practically collapsed
+        st.success("🎉 Sidebar is collapsed!")
 
 st.markdown("---")
 
@@ -179,6 +242,16 @@ config = {
     'min_widths': [0.15, 0.15, 0.15]  # 15% minimum each
 }
 result = expandable_columns(config, key="advanced")
+```
+
+### Collapsible Columns
+```python
+# Column that can be completely collapsed (min_width = 0)
+collapsible_config = {
+    'widths': [1, 3, 1],
+    'min_widths': [0, 0.15, 0.15]  # First column can collapse to 0
+}
+result = expandable_columns(collapsible_config, key="collapsible")
 ```
 """)
 
