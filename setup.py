@@ -9,12 +9,12 @@ with open(os.path.join(this_directory, "README.md"), encoding="utf-8") as f:
 setup(
     name="streamlit-expandable-columns",
     version="0.1.0",
-    author="Your Name",
-    author_email="your.email@example.com",
+    author="Daniel Jannai Epstein",
+    author_email="daniel@example.com",
     description="A Streamlit custom component for creating columns with adjustable widths",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/streamlit-expandable-columns",
+    url="https://github.com/danieljannai/streamlit-expandable-columns",
     packages=find_packages(),
     include_package_data=True,
     classifiers=[
