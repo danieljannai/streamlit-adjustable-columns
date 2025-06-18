@@ -2,7 +2,7 @@
 import { Streamlit } from "streamlit-component-lib"
 
 /**
- * Creates resize handles that align with Streamlit columns below
+ * Creates resize handles positioned at exact column boundaries
  */
 function onRender(event) {
     const data = event.detail
@@ -35,148 +35,163 @@ function onRender(event) {
         border: getComputedStyle(document.documentElement).getPropertyValue('--border-color') || '#e6eaf1'
     }
     
-    // Define gap sizes (matching Streamlit's gap values)
+    // Gap sizes that match Streamlit exactly (from CSS inspection)
     const gapSizes = {
-        small: '0.5rem',
-        medium: '1rem', 
-        large: '1.5rem'
+        small: 8,   // 0.5rem = 8px
+        medium: 16, // 1rem = 16px  
+        large: 24   // 1.5rem = 24px
     }
     
-    // Create the resize handle container that mimics the column layout
+    const gapPixels = gapSizes[gap]
+    
+    // Create main container
     const handleContainer = document.createElement("div")
     handleContainer.className = "resize-handle-container"
     handleContainer.style.cssText = `
-        display: flex;
+        position: relative;
         width: 100%;
         height: 40px;
-        gap: ${gapSizes[gap]};
-        position: relative;
-        box-sizing: border-box;
         background: transparent;
-        margin-bottom: 10px;
-        align-items: center;
+        margin-bottom: 8px;
     `
     
-    // Calculate total width for proportions
-    const totalWidth = currentWidths.reduce((sum, w) => sum + w, 0)
+    // Calculate column positions based on widths and gaps
+    function calculateColumnPositions(containerWidth) {
+        const totalWidth = currentWidths.reduce((sum, w) => sum + w, 0)
+        const totalGapWidth = (currentWidths.length - 1) * gapPixels
+        const availableWidth = containerWidth - totalGapWidth
+        
+        let positions = []
+        let currentPos = 0
+        
+        for (let i = 0; i < currentWidths.length; i++) {
+            const columnWidth = (currentWidths[i] / totalWidth) * availableWidth
+            positions.push({
+                start: currentPos,
+                width: columnWidth,
+                end: currentPos + columnWidth
+            })
+            currentPos += columnWidth + gapPixels
+        }
+        
+        return positions
+    }
     
-    // Create handle areas that match the column layout exactly
-    const handleAreas = []
-    currentWidths.forEach((width, index) => {
-        const widthPercentage = (width / totalWidth) * 100
+    // Create column indicators and resize handles
+    function updateLayout() {
+        handleContainer.innerHTML = ""
+        const containerWidth = handleContainer.offsetWidth || 800 // fallback
+        const positions = calculateColumnPositions(containerWidth)
         
-        // Create handle area that matches column width
-        const handleArea = document.createElement("div")
-        handleArea.className = "handle-area"
-        handleArea.style.cssText = `
-            flex: 0 0 ${widthPercentage}%;
-            height: 100%;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: ${border ? 'rgba(230, 234, 241, 0.1)' : 'transparent'};
-            ${border ? 'border: 1px dashed rgba(230, 234, 241, 0.3);' : ''}
-            border-radius: 4px;
-            box-sizing: border-box;
-            transition: all 0.15s ease;
-        `
-        
-        // Add column label
-        const label = document.createElement("div")
-        label.textContent = labels[index]
-        label.style.cssText = `
-            font-size: 11px;
-            color: ${theme.text}60;
-            font-weight: 500;
-            opacity: 0.7;
-            pointer-events: none;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 90%;
-        `
-        
-        handleArea.appendChild(label)
-        
-        // Add hover effect for the handle area
-        handleArea.addEventListener('mouseenter', () => {
-            if (!isResizing) {
-                handleArea.style.background = border ? 'rgba(230, 234, 241, 0.2)' : 'rgba(230, 234, 241, 0.1)'
-                label.style.opacity = '1'
-            }
-        })
-        
-        handleArea.addEventListener('mouseleave', () => {
-            if (!isResizing) {
-                handleArea.style.background = border ? 'rgba(230, 234, 241, 0.1)' : 'transparent'
-                label.style.opacity = '0.7'
-            }
-        })
-        
-        // Create resize handle (except for last area)
-        if (index < currentWidths.length - 1) {
-            const resizeHandle = document.createElement("div")
-            resizeHandle.className = "resize-handle"
-            resizeHandle.style.cssText = `
+        positions.forEach((pos, index) => {
+            // Create column indicator
+            const indicator = document.createElement("div")
+            indicator.className = "column-indicator"
+            indicator.style.cssText = `
                 position: absolute;
-                right: calc(-${gapSizes[gap]} / 2 - 3px);
-                top: 50%;
-                transform: translateY(-50%);
-                width: 6px;
-                height: 80%;
-                cursor: col-resize;
-                z-index: 1001;
+                left: ${pos.start}px;
+                width: ${pos.width}px;
+                height: 100%;
+                background: ${border ? 'rgba(230, 234, 241, 0.1)' : 'rgba(100, 100, 100, 0.05)'};
+                ${border ? 'border: 1px dashed rgba(230, 234, 241, 0.3);' : ''}
+                border-radius: 4px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                border-radius: 3px;
-                transition: all 0.15s ease;
-                background: transparent;
+                transition: background 0.15s ease;
+                box-sizing: border-box;
             `
             
-            // Visual indicator for the handle
-            const handleBar = document.createElement("div")
-            handleBar.className = "handle-bar"
-            handleBar.style.cssText = `
-                width: 2px;
-                height: 70%;
-                background: ${theme.text}40;
-                border-radius: 1px;
-                transition: all 0.15s ease;
+            // Add label
+            const label = document.createElement("div")
+            label.textContent = labels[index]
+            label.style.cssText = `
+                font-size: 11px;
+                color: ${theme.text}60;
+                font-weight: 500;
+                opacity: 0.7;
+                pointer-events: none;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 90%;
             `
             
-            resizeHandle.appendChild(handleBar)
-            resizeHandle.dataset.index = index
+            indicator.appendChild(label)
             
-            // Handle hover effects
-            resizeHandle.addEventListener('mouseenter', () => {
+            // Hover effect
+            indicator.addEventListener('mouseenter', () => {
                 if (!isResizing) {
-                    handleBar.style.background = theme.primary
-                    handleBar.style.width = '4px'
-                    resizeHandle.style.background = `${theme.primary}15`
+                    indicator.style.background = border ? 'rgba(230, 234, 241, 0.2)' : 'rgba(100, 100, 100, 0.1)'
+                    label.style.opacity = '1'
                 }
             })
             
-            resizeHandle.addEventListener('mouseleave', () => {
+            indicator.addEventListener('mouseleave', () => {
                 if (!isResizing) {
-                    handleBar.style.background = `${theme.text}40`
-                    handleBar.style.width = '2px'
-                    resizeHandle.style.background = 'transparent'
+                    indicator.style.background = border ? 'rgba(230, 234, 241, 0.1)' : 'rgba(100, 100, 100, 0.05)'
+                    label.style.opacity = '0.7'
                 }
             })
             
-            // Handle mouse events for resizing
-            resizeHandle.addEventListener('mousedown', (e) => startResize(e, resizeHandle, handleBar))
+            handleContainer.appendChild(indicator)
             
-            handleArea.appendChild(resizeHandle)
-        }
-        
-        handleAreas.push(handleArea)
-        handleContainer.appendChild(handleArea)
-    })
-    
-    container.appendChild(handleContainer)
+            // Create resize handle at the boundary (except for last column)
+            if (index < positions.length - 1) {
+                const handle = document.createElement("div")
+                handle.className = "resize-handle"
+                handle.style.cssText = `
+                    position: absolute;
+                    left: ${pos.end + gapPixels / 2 - 4}px;
+                    top: 0;
+                    width: 8px;
+                    height: 100%;
+                    cursor: col-resize;
+                    z-index: 1001;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 4px;
+                    transition: all 0.15s ease;
+                    background: transparent;
+                `
+                
+                // Visual handle bar
+                const handleBar = document.createElement("div")
+                handleBar.style.cssText = `
+                    width: 2px;
+                    height: 70%;
+                    background: ${theme.text}40;
+                    border-radius: 1px;
+                    transition: all 0.15s ease;
+                `
+                
+                handle.appendChild(handleBar)
+                handle.dataset.index = index
+                
+                // Handle events
+                handle.addEventListener('mouseenter', () => {
+                    if (!isResizing) {
+                        handleBar.style.background = theme.primary
+                        handleBar.style.width = '4px'
+                        handle.style.background = `${theme.primary}15`
+                    }
+                })
+                
+                handle.addEventListener('mouseleave', () => {
+                    if (!isResizing) {
+                        handleBar.style.background = `${theme.text}40`
+                        handleBar.style.width = '2px'
+                        handle.style.background = 'transparent'
+                    }
+                })
+                
+                handle.addEventListener('mousedown', (e) => startResize(e, handle, handleBar))
+                
+                handleContainer.appendChild(handle)
+            }
+        })
+    }
     
     function startResize(e, handle, handleBar) {
         isResizing = true
@@ -189,19 +204,18 @@ function onRender(event) {
         handleBar.style.width = '4px'
         handle.style.background = `${theme.primary}25`
         
-        // Dim all labels during resize
-        handleAreas.forEach(area => {
-            const label = area.querySelector('div')
-            if (label) {
-                label.style.opacity = '0.3'
-                area.style.background = 'rgba(230, 234, 241, 0.05)'
-            }
+        // Dim indicators
+        const indicators = handleContainer.querySelectorAll('.column-indicator')
+        indicators.forEach(indicator => {
+            indicator.style.background = 'rgba(100, 100, 100, 0.03)'
+            const label = indicator.querySelector('div')
+            if (label) label.style.opacity = '0.3'
         })
         
         document.addEventListener('mousemove', handleResize)
         document.addEventListener('mouseup', stopResize)
         
-        // Prevent text selection during resize
+        // Prevent text selection
         document.body.style.userSelect = 'none'
         document.body.style.cursor = 'col-resize'
         e.preventDefault()
@@ -212,10 +226,12 @@ function onRender(event) {
         
         const deltaX = e.clientX - startX
         const containerWidth = handleContainer.offsetWidth
+        const totalGapWidth = (currentWidths.length - 1) * gapPixels
+        const availableWidth = containerWidth - totalGapWidth
         const totalCurrentWidth = currentWidths.reduce((sum, w) => sum + w, 0)
         
-        // Calculate change in ratio based on container width
-        const deltaRatio = (deltaX / containerWidth) * totalCurrentWidth
+        // Calculate change in ratio
+        const deltaRatio = (deltaX / availableWidth) * totalCurrentWidth
         
         const leftIndex = resizingIndex
         const rightIndex = resizingIndex + 1
@@ -240,17 +256,8 @@ function onRender(event) {
         currentWidths[leftIndex] = newLeftWidth
         currentWidths[rightIndex] = newRightWidth
         
-        // Update handle area widths immediately
-        updateHandleWidths()
-    }
-    
-    function updateHandleWidths() {
-        const newTotal = currentWidths.reduce((sum, w) => sum + w, 0)
-        
-        handleAreas.forEach((area, index) => {
-            const widthPercentage = (currentWidths[index] / newTotal) * 100
-            area.style.flex = `0 0 ${widthPercentage}%`
-        })
+        // Update layout immediately
+        updateLayout()
     }
     
     function stopResize(e) {
@@ -260,14 +267,14 @@ function onRender(event) {
         document.removeEventListener('mousemove', handleResize)
         document.removeEventListener('mouseup', stopResize)
         
-        // Reset body styles
+        // Reset styles
         document.body.style.userSelect = ''
         document.body.style.cursor = ''
         
-        // Reset all handle visuals
+        // Reset handle visuals
         const handles = handleContainer.querySelectorAll('.resize-handle')
         handles.forEach(handle => {
-            const handleBar = handle.querySelector('.handle-bar')
+            const handleBar = handle.querySelector('div')
             if (handleBar) {
                 handleBar.style.background = `${theme.text}40`
                 handleBar.style.width = '2px'
@@ -275,13 +282,12 @@ function onRender(event) {
             handle.style.background = 'transparent'
         })
         
-        // Reset handle areas
-        handleAreas.forEach(area => {
-            const label = area.querySelector('div')
-            if (label) {
-                label.style.opacity = '0.7'
-                area.style.background = border ? 'rgba(230, 234, 241, 0.1)' : 'transparent'
-            }
+        // Reset indicators
+        const indicators = handleContainer.querySelectorAll('.column-indicator')
+        indicators.forEach(indicator => {
+            indicator.style.background = border ? 'rgba(230, 234, 241, 0.1)' : 'rgba(100, 100, 100, 0.05)'
+            const label = indicator.querySelector('div')
+            if (label) label.style.opacity = '0.7'
         })
         
         // Send updated widths back to Streamlit
@@ -291,40 +297,23 @@ function onRender(event) {
         })
     }
     
-    // Set compact frame height
+    container.appendChild(handleContainer)
+    
+    // Initial layout
+    updateLayout()
+    
+    // Update layout on resize
+    const resizeObserver = new ResizeObserver(() => {
+        updateLayout()
+    })
+    resizeObserver.observe(handleContainer)
+    
+    // Set frame height
     Streamlit.setFrameHeight(60)
     
-    // Add global styles for better integration
+    // Add styles
     const style = document.createElement('style')
     style.textContent = `
-        .resize-handle-container {
-            font-family: inherit;
-        }
-        
-        .handle-area {
-            min-width: 6% !important;
-        }
-        
-        .resize-handle:hover .handle-bar {
-            background: ${theme.primary} !important;
-            width: 4px !important;
-        }
-        
-        .resize-handle.resizing {
-            background: ${theme.primary}25 !important;
-        }
-        
-        .resize-handle.resizing .handle-bar {
-            background: ${theme.primary} !important;
-            width: 4px !important;
-        }
-        
-        /* Smooth transitions for handle area width changes */
-        .handle-area {
-            transition: flex 0.1s ease-out;
-        }
-        
-        /* Ensure clean appearance */
         body {
             margin: 0;
             padding: 0;
@@ -335,6 +324,18 @@ function onRender(event) {
             width: 100%;
             padding: 8px;
             box-sizing: border-box;
+        }
+        
+        .resize-handle:hover {
+            background-color: ${theme.primary}15 !important;
+        }
+        
+        .column-indicator {
+            transition: background 0.15s ease, opacity 0.15s ease;
+        }
+        
+        .resize-handle {
+            transition: background 0.15s ease;
         }
     `
     document.head.appendChild(style)

@@ -158,6 +158,35 @@ def expandable_columns(spec=None, *, gap="small", vertical_alignment="top", bord
             # Force a rerun to update the column layout
             st.rerun()
     
+    # Add CSS to ensure perfect alignment between resize handles and columns
+    alignment_css = f"""
+    <style>
+    /* Ensure the resize handles iframe has no extra spacing */
+    iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"] {{
+        border: none !important;
+        background: transparent !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }}
+    
+    /* Remove any extra margins from the element container holding the iframe */
+    .element-container:has(iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]) {{
+        margin-bottom: 0 !important;
+    }}
+    
+    /* Ensure the following columns have proper spacing */
+    .element-container:has(iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]) + div[data-testid="column"] {{
+        margin-top: 0 !important;
+    }}
+    
+    .element-container:has(iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]) + div[data-testid="column"] ~ div[data-testid="column"] {{
+        margin-top: 0 !important;
+    }}
+    </style>
+    """
+    
+    st.markdown(alignment_css, unsafe_allow_html=True)
+    
     # Create the actual Streamlit columns with current widths
     # Ensure each column is at least 6% of total width
     MIN_WIDTH_RATIO = 0.06
