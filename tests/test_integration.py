@@ -84,7 +84,11 @@ class TestExpandableColumnsIntegration:
             assert len(result2) == 1
 
             # List spec with multiple elements
-            mock_columns.return_value = [MagicMock(), MagicMock(), MagicMock()]
+            mock_columns.return_value = [
+                MagicMock(),
+                MagicMock(),
+                MagicMock(),
+            ]
             result3 = expandable_columns([2, 1, 1])
             assert len(result3) == 3
 
@@ -143,7 +147,11 @@ class TestExpandableColumnsIntegration:
             "streamlit_expandable_columns.st.markdown"
         ), patch("streamlit_expandable_columns.st.rerun"):
 
-            mock_columns.return_value = [MagicMock(), MagicMock(), MagicMock()]
+            mock_columns.return_value = [
+                MagicMock(),
+                MagicMock(),
+                MagicMock(),
+            ]
 
             result = expandable_columns(3, return_widths=True, key="width_calc_test")
 
