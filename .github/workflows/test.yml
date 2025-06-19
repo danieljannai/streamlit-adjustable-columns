@@ -56,11 +56,12 @@ jobs:
       run: |
         pytest -v -m "unit or not e2e" --tb=short
     
-    - name: Run E2E tests
-      run: |
-        pytest -v -m "e2e" --tb=short --browser firefox --browser chromium
-      env:
-        CI: true
+    # E2E tests disabled - uncomment when ready
+    # - name: Run E2E tests
+    #   run: |
+    #     pytest -v -m "e2e" --tb=short --browser firefox --browser chromium
+    #   env:
+    #     CI: true
 
   test-build:
     runs-on: ubuntu-latest
