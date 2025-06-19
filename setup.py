@@ -35,8 +35,8 @@ def build_frontend():
         print(f"Error building frontend: {e}")
         return False
 
-# Build frontend during setup
-if "install" in sys.argv or "develop" in sys.argv or "bdist_wheel" in sys.argv:
+# Build frontend during setup - handle more installation scenarios
+if any(arg in sys.argv for arg in ["install", "develop", "bdist_wheel", "sdist", "bdist"]):
     build_frontend()
 
 setup(

@@ -2,7 +2,39 @@
 
 Get the Streamlit Expandable Columns component running in under 5 minutes!
 
-## 🚀 Automated Setup (Recommended)
+## 📦 Installing the Package
+
+### From PyPI (Recommended)
+```bash
+pip install streamlit-expandable-columns
+```
+
+### From GitHub
+```bash
+pip install git+https://github.com/danieljannai/streamlit-expandable-columns.git
+```
+
+**Important**: This package requires Node.js and npm to build the frontend components during installation. If you don't have them installed:
+
+1. Install Node.js from [nodejs.org](https://nodejs.org/)
+2. Reinstall the package: `pip install streamlit-expandable-columns`
+
+### Using the Package
+```python
+import streamlit as st
+from streamlit_expandable_columns import expandable_columns
+
+# Create resizable columns
+col1, col2, col3 = expandable_columns(3, labels=["📊 Charts", "📋 Data", "⚙️ Settings"])
+
+with col1:
+    st.metric("Sales", "$1,234", "12%")
+    
+col2.write("This column can be resized!")
+col3.button("Settings")
+```
+
+## 🚀 Development Setup (Automated)
 
 Run the setup script to handle everything automatically:
 
@@ -17,7 +49,7 @@ This script will:
 - ✅ Install all frontend dependencies
 - ✅ Provide next steps
 
-## 🛠️ Manual Setup
+## 🛠️ Manual Development Setup
 
 If you prefer to set up manually:
 
@@ -114,4 +146,4 @@ Once everything is working:
 3. **Try the API** with different column configurations
 4. **Build your own app** using the component
 
-Happy coding! 🎛️ 
+Happy coding! 🎛️

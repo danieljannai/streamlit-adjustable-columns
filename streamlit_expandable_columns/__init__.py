@@ -16,6 +16,17 @@ if not _RELEASE:
 else:
     parent_dir = os.path.dirname(os.path.abspath(__file__))
     build_dir = os.path.join(parent_dir, "frontend/build")
+    
+    # Check if build directory exists
+    if not os.path.exists(build_dir):
+        raise RuntimeError(
+            f"Frontend build directory not found: {build_dir}\n"
+            "This usually means the frontend wasn't built during installation.\n"
+            "Please ensure you have Node.js and npm installed, then reinstall the package:\n"
+            "pip uninstall streamlit-expandable-columns\n"
+            "pip install streamlit-expandable-columns"
+        )
+    
     _component_func = components.declare_component(
         "streamlit_expandable_columns", 
         path=build_dir
