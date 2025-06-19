@@ -28,7 +28,7 @@ with col1:
 col2.metric("Users", "5,678", "-2%")
 col2.bar_chart(data)
 
-col3.metric("Revenue", "$9,012", "8%")  
+col3.metric("Revenue", "$9,012", "8%")
 col3.area_chart(data)
 """)
 
@@ -237,7 +237,7 @@ with content:
     - **Resizable content containers** - not just control bars!
     - Custom column labels with emojis
     - Draggable boundaries between actual content
-    - Streamlit theme integration  
+    - Streamlit theme integration
     - All st.columns parameters supported
     - New `return_widths` parameter for getting current ratios
     """)
@@ -359,7 +359,7 @@ cols = expandable_columns(
 - `labels`: Custom titles for each column shown in resize handles
 - `gap`: "small", "medium", or "large" - controls spacing between columns
 - `vertical_alignment`: "top", "center", or "bottom" - content alignment
-- `border`: True/False to show column borders  
+- `border`: True/False to show column borders
 - `return_widths`: True/False to return width information
 - `key`: Unique key for the component (recommended for multiple instances)
 

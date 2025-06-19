@@ -1,6 +1,7 @@
 # 🎯 Streamlit Expandable Columns
 
 [![PyPI version](https://badge.fury.io/py/streamlit-expandable-columns.svg)](https://badge.fury.io/py/streamlit-expandable-columns)
+[![Test](https://github.com/danieljannai/streamlit-expandable-columns/actions/workflows/test.yml/badge.svg)](https://github.com/danieljannai/streamlit-expandable-columns/actions/workflows/test.yml)
 
 Create resizable columns in Streamlit! This component provides `st.columns` functionality with **draggable resize handles** that allow users to adjust column widths dynamically.
 
@@ -180,12 +181,10 @@ git clone https://github.com/your-username/streamlit-expandable-columns
 cd streamlit-expandable-columns
 
 # Install in development mode
-pip install -e .
+make install-dev
 
 # Start the frontend development server
-cd streamlit_expandable_columns/frontend
-npm install
-npm start
+make frontend-dev
 
 # In another terminal, run Streamlit
 streamlit run example.py
@@ -193,17 +192,73 @@ streamlit run example.py
 
 ### Testing
 
-```bash
-# Run the simple test
-streamlit run test_simple.py
+The project includes comprehensive tests using pytest and Playwright:
 
-# Run the full example
-streamlit run example.py
+```bash
+# Run all tests
+make test
+
+# Run only unit tests
+make test-unit
+
+# Run only E2E tests  
+make test-e2e
+
+# Run with coverage
+pytest --cov=streamlit_expandable_columns
 ```
+
+### Code Quality
+
+```bash
+# Format code
+make format
+
+# Check linting
+make lint
+
+# Run full check (format + lint + test)
+make format && make lint && make test
+```
+
+### Building and Publishing
+
+```bash
+# Build the package
+make build
+
+# Upload to PyPI (requires credentials)
+make upload
+```
+
+## 🧪 Test Coverage
+
+The project includes comprehensive test coverage:
+
+- **Unit Tests**: Test core functionality, parameter handling, and state management
+- **Integration Tests**: Test component behavior with Streamlit integration
+- **E2E Tests**: Test user interactions, resize functionality, and visual elements
+- **Cross-browser Testing**: Firefox and Chromium support via Playwright
+
+Test files are organized in the `tests/` directory:
+- `tests/test_unit.py` - Unit tests for Python code
+- `tests/test_integration.py` - Integration tests
+- `tests/test_*.py` - E2E tests for specific features
+- `tests/streamlit_apps/` - Test Streamlit applications
 
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Install development dependencies (`make install-dev`)
+4. Make your changes and add tests
+5. Run the test suite (`make test`)
+6. Format your code (`make format`)
+7. Commit your changes (`git commit -m 'Add amazing feature'`)
+8. Push to the branch (`git push origin feature/amazing-feature`)
+9. Open a Pull Request
 
 ## 📝 License
 

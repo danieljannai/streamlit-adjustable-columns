@@ -25,10 +25,18 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Framework :: Streamlit",
     ],
     python_requires=">=3.7",
     install_requires=[
         "streamlit>=0.63",
     ],
+    extras_require={
+        "dev": [
+            "pytest>=7.0.0",
+            "playwright>=1.30.0",
+            "requests>=2.25.0",
+        ]
+    },
 ) 
