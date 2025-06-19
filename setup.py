@@ -1,10 +1,43 @@
 from setuptools import setup, find_packages
 import os
+import subprocess
+import sys
 
 # Read the README file
 this_directory = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(this_directory, "README.md"), encoding="utf-8") as f:
     long_description = f.read()
+
+def build_frontend():
+    """Build the frontend assets during installation."""
+    frontend_dir = os.path.join(this_directory, "streamlit_expandable_columns", "frontend")
+    
+    # Check if Node.js and npm are available
+    try:
+        subprocess.run(["node", "--version"], check=True, capture_output=True)
+        subprocess.run(["npm", "--version"], check=True, capture_output=True)
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        print("Warning: Node.js and npm are required to build the frontend.")
+        print("Please install Node.js and npm, then reinstall this package.")
+        return False
+    
+    # Install dependencies and build
+    try:
+        print("Installing frontend dependencies...")
+        subprocess.run(["npm", "install"], cwd=frontend_dir, check=True, capture_output=True)
+        
+        print("Building frontend...")
+        subprocess.run(["npm", "run", "build"], cwd=frontend_dir, check=True, capture_output=True)
+        
+        print("Frontend built successfully!")
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"Error building frontend: {e}")
+        return False
+
+# Build frontend during setup
+if "install" in sys.argv or "develop" in sys.argv or "bdist_wheel" in sys.argv:
+    build_frontend()
 
 setup(
     name="streamlit-expandable-columns",
