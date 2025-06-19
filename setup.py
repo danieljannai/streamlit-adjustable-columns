@@ -15,8 +15,7 @@ def build_frontend():
     build_dir = os.path.join(frontend_dir, "build")
 
     # Skip build if compiled assets already exist
-    required = ["index.html", "main.js"]
-    if all(os.path.exists(os.path.join(build_dir, f)) for f in required):
+    if os.path.exists(build_dir) and os.listdir(build_dir):
         print("Frontend already built. Skipping build.")
         return True
 
@@ -61,15 +60,12 @@ setup(
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Framework :: Streamlit",
     ],
-    python_requires=">=3.7",
+    python_requires=">=3.9",
     install_requires=[
         "streamlit>=0.63",
     ],

@@ -139,7 +139,7 @@ The test suite covers:
 ## 🔄 Continuous Integration
 
 GitHub Actions workflow runs:
-- Python 3.8, 3.9, 3.10, 3.11 compatibility
+- Python 3.9, 3.10, 3.11 compatibility
 - Linting and formatting checks
 - Unit and E2E tests
 - Package building validation
