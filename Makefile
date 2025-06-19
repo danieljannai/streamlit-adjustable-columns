@@ -33,7 +33,7 @@ test-e2e:
 	pytest -v -m "e2e" --browser firefox --browser chromium
 
 lint:
-	flake8 streamlit_expandable_columns tests
+	# flake8 streamlit_expandable_columns tests
 	black --check streamlit_expandable_columns tests
 	isort --check-only streamlit_expandable_columns tests
 

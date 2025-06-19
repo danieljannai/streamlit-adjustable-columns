@@ -1,13 +1,12 @@
 import streamlit as st
+
 from streamlit_expandable_columns import expandable_columns
 
 st.subheader("Test Expandable Columns with Labels")
 
 # Columns with custom labels
 col1, col2, col3 = expandable_columns(
-    3, 
-    labels=["📊 Charts", "📋 Data", "⚙️ Settings"],
-    key="labels_test"
+    3, labels=["📊 Charts", "📋 Data", "⚙️ Settings"], key="labels_test"
 )
 
 with col1:
@@ -20,4 +19,4 @@ with col2:
 
 with col3:
     st.write("Settings section")
-    st.selectbox("Option", ["A", "B", "C"]) 
+    st.selectbox("Option", ["A", "B", "C"])

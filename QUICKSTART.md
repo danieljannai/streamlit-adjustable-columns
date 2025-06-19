@@ -14,10 +14,8 @@ pip install streamlit-expandable-columns
 pip install git+https://github.com/danieljannai/streamlit-expandable-columns.git
 ```
 
-**Important**: This package requires Node.js and npm to build the frontend components during installation. If you don't have them installed:
-
-1. Install Node.js from [nodejs.org](https://nodejs.org/)
-2. Reinstall the package: `pip install streamlit-expandable-columns`
+**Important**: When installing from a source checkout (e.g. GitHub), Node.js and npm are required to build the frontend assets.
+Packages downloaded from PyPI already contain the compiled frontend so no extra tools are needed.
 
 ### Using the Package
 ```python

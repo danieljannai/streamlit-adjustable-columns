@@ -8,7 +8,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
+/build/
 develop-eggs/
 dist/
 downloads/
@@ -33,8 +33,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Frontend build output
-streamlit_expandable_columns/frontend/build/
+# Frontend build output (keep build folder tracked for packaging)
+# streamlit_expandable_columns/frontend/dist/ remains ignored
 streamlit_expandable_columns/frontend/dist/
 
 # IDE files
