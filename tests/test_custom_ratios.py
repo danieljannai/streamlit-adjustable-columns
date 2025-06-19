@@ -7,7 +7,9 @@ from playwright.sync_api import Page, expect
 from tests import ROOT_DIRECTORY
 from tests.e2e_utils import StreamlitRunner
 
-RATIOS_EXAMPLE_FILE = os.path.join(ROOT_DIRECTORY, "tests", "streamlit_apps", "example_custom_ratios.py")
+RATIOS_EXAMPLE_FILE = os.path.join(
+    ROOT_DIRECTORY, "tests", "streamlit_apps", "example_custom_ratios.py"
+)
 
 
 @pytest.fixture(autouse=True, scope="module")
@@ -26,14 +28,20 @@ def go_to_app(page: Page, streamlit_app: StreamlitRunner):
 @pytest.mark.e2e
 def test_should_render_custom_ratios(page: Page):
     """Test that custom width ratios are applied correctly."""
-    expect(page.get_by_text("Test Expandable Columns with Custom Ratios")).to_be_visible()
+    expect(
+        page.get_by_text("Test Expandable Columns with Custom Ratios")
+    ).to_be_visible()
 
     # Check that the iframe component is rendered
-    iframe_component = page.locator('iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]').nth(0)
+    iframe_component = page.locator(
+        'iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]'
+    ).nth(0)
     expect(iframe_component).to_be_visible()
 
     # Check that custom labels for ratios are present
-    iframe_frame = page.frame_locator('iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]')
+    iframe_frame = page.frame_locator(
+        'iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]'
+    )
     expect(iframe_frame.get_by_text("Main Content")).to_be_visible()
     expect(iframe_frame.get_by_text("Sidebar")).to_be_visible()
 
@@ -41,19 +49,21 @@ def test_should_render_custom_ratios(page: Page):
 @pytest.mark.e2e
 def test_should_apply_width_ratios(page: Page):
     """Test that 3:1 width ratio is applied correctly."""
-    iframe_frame = page.frame_locator('iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]')
-    
+    iframe_frame = page.frame_locator(
+        'iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]'
+    )
+
     # Get the column containers (if they have identifiable classes)
-    columns = iframe_frame.locator('.column-container')
-    
+    columns = iframe_frame.locator(".column-container")
+
     if columns.count() >= 2:
         # Get bounding boxes for width comparison
         main_box = columns.nth(0).bounding_box()
         sidebar_box = columns.nth(1).bounding_box()
-        
+
         if main_box and sidebar_box:
             # Main column should be roughly 3 times wider than sidebar
-            ratio = main_box['width'] / sidebar_box['width']
+            ratio = main_box["width"] / sidebar_box["width"]
             # Allow some tolerance for the ratio (between 2.5 and 3.5)
             assert 2.5 <= ratio <= 3.5
 
@@ -76,11 +86,13 @@ def test_should_render_ratio_content(page: Page):
 @pytest.mark.e2e
 def test_single_resize_handle_for_two_columns(page: Page):
     """Test that there's only one resize handle for two columns."""
-    iframe_frame = page.frame_locator('iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]')
-    
+    iframe_frame = page.frame_locator(
+        'iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]'
+    )
+
     # Should have exactly 1 resize handle for 2 columns
-    resize_handles = iframe_frame.locator('.resize-handle')
+    resize_handles = iframe_frame.locator(".resize-handle")
     expect(resize_handles).to_be_visible()
-    
+
     handle_count = resize_handles.count()
-    assert handle_count == 1 
+    assert handle_count == 1

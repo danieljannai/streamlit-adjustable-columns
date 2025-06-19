@@ -1,4 +1,5 @@
 import streamlit as st
+
 from streamlit_expandable_columns import expandable_columns
 
 st.subheader("Test Basic Expandable Columns")
@@ -16,4 +17,4 @@ with col2:
 
 with col3:
     st.write("Column 3 Content")
-    st.metric("Metric 3", "300") 
+    st.metric("Metric 3", "300")
