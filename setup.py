@@ -64,11 +64,11 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
-        "Framework :: Streamlit",
+        # "Framework :: Streamlit",
     ],
     python_requires=">=3.9",
     install_requires=[
-        "streamlit>=0.63",
+        "streamlit>=1.0.0",
     ],
     extras_require={
         "dev": [
