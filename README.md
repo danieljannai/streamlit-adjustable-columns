@@ -274,6 +274,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Inspired by the need for flexible column layouts in Streamlit applications
 - Developed with great assistance from [Cursor](https://cursor.com/) AI coding assistant
 
+## 👨‍💻 Author
+
+**Daniel Jannai Epstein**
+
+- GitHub: [@danieljannai](https://github.com/danieljannai)
+- Created this component to enhance Streamlit's column functionality
+
 ---
 
 **Made with ❤️ for the Streamlit community** 
