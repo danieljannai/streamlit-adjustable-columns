@@ -20,17 +20,16 @@ else:
     parent_dir = os.path.dirname(os.path.abspath(__file__))
     build_dir = os.path.join(parent_dir, "frontend/build")
 
-    # Check if build directory and required files exist
-    index_html = os.path.join(build_dir, "index.html")
+    # Check if build directory and required file exist
     main_js = os.path.join(build_dir, "main.js")
 
-    if not os.path.exists(index_html) or not os.path.exists(main_js):
+    if not os.path.exists(main_js):
         raise RuntimeError(
-            f"Compiled frontend assets not found in: {build_dir}\n"
+            f"Compiled frontend asset not found in: {build_dir}\n"
             "This usually means the frontend wasn't built during installation.\n"
             "If installing from a source checkout, ensure Node.js and npm are installed, then run:\n"
             "pip install .\n"
-            "Alternatively install from PyPI where prebuilt assets are included."
+            "Alternatively install from PyPI where prebuilt asset is included."
         )
 
     _component_func = components.declare_component(
