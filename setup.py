@@ -15,7 +15,8 @@ def build_frontend():
     build_dir = os.path.join(frontend_dir, "build")
 
     # Skip build if compiled assets already exist
-    if os.path.exists(build_dir) and os.listdir(build_dir):
+    required = ["index.html", "main.js"]
+    if all(os.path.exists(os.path.join(build_dir, f)) for f in required):
         print("Frontend already built. Skipping build.")
         return True
 

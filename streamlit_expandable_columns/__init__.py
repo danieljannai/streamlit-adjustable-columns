@@ -17,14 +17,17 @@ else:
     parent_dir = os.path.dirname(os.path.abspath(__file__))
     build_dir = os.path.join(parent_dir, "frontend/build")
     
-    # Check if build directory exists
-    if not os.path.exists(build_dir):
+    # Check if build directory and required files exist
+    index_html = os.path.join(build_dir, "index.html")
+    main_js = os.path.join(build_dir, "main.js")
+
+    if not os.path.exists(index_html) or not os.path.exists(main_js):
         raise RuntimeError(
-            f"Frontend build directory not found: {build_dir}\n"
+            f"Compiled frontend assets not found in: {build_dir}\n"
             "This usually means the frontend wasn't built during installation.\n"
-            "Please ensure you have Node.js and npm installed, then reinstall the package:\n"
-            "pip uninstall streamlit-expandable-columns\n"
-            "pip install streamlit-expandable-columns"
+            "If installing from a source checkout, ensure Node.js and npm are installed, then run:\n"
+            "pip install .\n"
+            "Alternatively install from PyPI where prebuilt assets are included."
         )
     
     _component_func = components.declare_component(
