@@ -3,7 +3,6 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
-import streamlit as st
 
 from streamlit_expandable_columns import expandable_columns
 
@@ -118,7 +117,7 @@ def test_session_state_key_generation():
     """Test that session state keys are generated correctly."""
     with patch("streamlit_expandable_columns.st.columns") as mock_columns, patch(
         "streamlit_expandable_columns.st.session_state", {}
-    ) as mock_session:
+    ):
 
         mock_columns.return_value = [MagicMock(), MagicMock()]
 
@@ -172,7 +171,7 @@ def test_component_integration():
 
         with patch("streamlit_expandable_columns.st.columns") as mock_columns, patch(
             "streamlit_expandable_columns.st.session_state", {}
-        ) as mock_session, patch("streamlit_expandable_columns.st.markdown"), patch(
+        ), patch("streamlit_expandable_columns.st.markdown"), patch(
             "streamlit_expandable_columns.st.rerun"
         ):
 

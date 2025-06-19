@@ -1,8 +1,8 @@
+# flake8: noqa: E501 C901
+
 import hashlib
 import inspect
 import os
-import uuid
-from typing import Any, Dict, List, Optional, Union
 
 import streamlit as st
 import streamlit.components.v1 as components
@@ -189,29 +189,29 @@ def expandable_columns(
             st.rerun()
 
     # Add CSS to ensure perfect alignment between resize handles and columns
-    alignment_css = f"""
+    alignment_css = """
     <style>
     /* Ensure the resize handles iframe has no extra spacing */
-    iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"] {{
+    iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"] {
         border: none !important;
         background: transparent !important;
         margin: 0 !important;
         padding: 0 !important;
-    }}
-    
+    }
+
     /* Remove any extra margins from the element container holding the iframe */
-    .element-container:has(iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]) {{
+    .element-container:has(iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]) {
         margin-bottom: 0 !important;
-    }}
-    
+    }
+
     /* Ensure the following columns have proper spacing */
-    .element-container:has(iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]) + div[data-testid="column"] {{
+    .element-container:has(iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]) + div[data-testid="column"] {
         margin-top: 0 !important;
-    }}
-    
-    .element-container:has(iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]) + div[data-testid="column"] ~ div[data-testid="column"] {{
+    }
+
+    .element-container:has(iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]) + div[data-testid="column"] ~ div[data-testid="column"] {
         margin-top: 0 !important;
-    }}
+    }
     </style>
     """
 

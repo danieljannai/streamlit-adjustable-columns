@@ -3,7 +3,6 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
-import streamlit as st
 
 from streamlit_expandable_columns import expandable_columns
 
@@ -20,7 +19,7 @@ class TestExpandableColumnsIntegration:
 
     def test_component_with_session_state(self):
         """Test component behavior with session state."""
-        with patch("streamlit_expandable_columns.st.session_state", {}) as mock_session:
+        with patch("streamlit_expandable_columns.st.session_state", {}):
             with patch("streamlit_expandable_columns.st.columns") as mock_columns:
                 mock_columns.return_value = [MagicMock(), MagicMock()]
 
@@ -108,7 +107,7 @@ class TestExpandableColumnsIntegration:
                 mock_columns.return_value = [MagicMock(), MagicMock()]
 
                 labels = ["📊 Dashboard", "⚙️ Settings"]
-                result = expandable_columns(2, labels=labels, key="labels_integration")
+                expandable_columns(2, labels=labels, key="labels_integration")
 
                 # Component should receive the labels
                 mock_component.assert_called_once()
