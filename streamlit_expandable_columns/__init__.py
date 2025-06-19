@@ -3,6 +3,8 @@ import streamlit as st
 import streamlit.components.v1 as components
 from typing import List, Union, Optional, Dict, Any
 import uuid
+import inspect
+import hashlib
 
 # Create a _RELEASE constant. We'll set this to False while we're developing
 # the component, and True when we're ready to package and distribute it.
@@ -128,7 +130,12 @@ def expandable_columns(spec=None, *, gap="small", vertical_alignment="top", bord
     
     # Create unique identifier for this set of columns
     if key is None:
-        unique_id = str(uuid.uuid4())[:8]
+        caller = inspect.currentframe().f_back
+        try:
+            src = f"{caller.f_code.co_filename}:{caller.f_lineno}"
+        finally:
+            del caller
+        unique_id = hashlib.md5(src.encode()).hexdigest()[:8]
     else:
         unique_id = key
     
