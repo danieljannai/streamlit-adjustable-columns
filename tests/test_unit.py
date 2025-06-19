@@ -13,7 +13,11 @@ def test_expandable_columns_basic_usage():
     """Test basic usage with integer spec."""
     with patch("streamlit_expandable_columns.st.columns") as mock_columns:
         # Mock the columns return value
-        mock_col1, mock_col2, mock_col3 = MagicMock(), MagicMock(), MagicMock()
+        mock_col1, mock_col2, mock_col3 = (
+            MagicMock(),
+            MagicMock(),
+            MagicMock(),
+        )
         mock_columns.return_value = [mock_col1, mock_col2, mock_col3]
 
         # Call the function
@@ -44,7 +48,11 @@ def test_expandable_columns_return_widths():
         "streamlit_expandable_columns.st.session_state", {}
     ):
 
-        mock_col1, mock_col2, mock_col3 = MagicMock(), MagicMock(), MagicMock()
+        mock_col1, mock_col2, mock_col3 = (
+            MagicMock(),
+            MagicMock(),
+            MagicMock(),
+        )
         mock_columns.return_value = [mock_col1, mock_col2, mock_col3]
 
         result = expandable_columns(3, return_widths=True, key="test")
@@ -168,7 +176,11 @@ def test_component_integration():
             "streamlit_expandable_columns.st.rerun"
         ):
 
-            mock_columns.return_value = [MagicMock(), MagicMock(), MagicMock()]
+            mock_columns.return_value = [
+                MagicMock(),
+                MagicMock(),
+                MagicMock(),
+            ]
 
             expandable_columns(3, labels=["A", "B", "C"], key="test")
 

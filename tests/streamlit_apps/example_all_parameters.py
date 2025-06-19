@@ -18,7 +18,7 @@ result = expandable_columns(
 columns = result["columns"]
 widths = result["widths"]
 
-st.write(f"**Gap:** large, **Alignment:** center, **Border:** True")
+st.write("**Gap:** large, **Alignment:** center, **Border:** True")
 st.write(f"**Current widths:** {[f'{w:.2f}' for w in widths]}")
 
 with columns[0]:
