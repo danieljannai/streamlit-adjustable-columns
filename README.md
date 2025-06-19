@@ -272,7 +272,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Built with [Streamlit](https://streamlit.io/)
 - Inspired by the need for flexible column layouts in Streamlit applications
-- Thanks to the Streamlit community for feedback and suggestions
+- Developed with great assistance from [Cursor](https://cursor.com/) AI coding assistant
 
 ---
 

@@ -18,18 +18,18 @@ help:
 install:
 	pip install -e .
 
-install-dev:
+install-dev: frontend-install
 	pip install -e ".[dev]"
 	pip install -r requirements-dev.txt
 	playwright install
 
-test:
+test: frontend-build
 	pytest -v -m "not e2e"
 
-test-unit:
+test-unit: frontend-build
 	pytest -v -m "unit"
 
-test-e2e:
+test-e2e: frontend-build
 	pytest -v -m "e2e" --browser firefox --browser chromium
 
 lint:
@@ -44,6 +44,9 @@ format:
 clean:
 	rm -rf build/
 	rm -rf dist/
+	rm -rf streamlit_expandable_columns/frontend/node_modules/
+	rm -rf streamlit_expandable_columns/frontend/build/
+	rm -rf streamlit_expandable_columns/frontend/dist/
 	rm -rf *.egg-info/
 	find . -type d -name __pycache__ -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
@@ -58,7 +61,7 @@ upload: build
 frontend-install:
 	cd streamlit_expandable_columns/frontend && npm install
 
-frontend-build:
+frontend-build: frontend-install
 	cd streamlit_expandable_columns/frontend && npm run build
 
 frontend-dev:
