@@ -35,6 +35,19 @@ jobs:
         pip install -e ".[dev]"
         pip install -r requirements-dev.txt
     
+    - name: Install Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: streamlit_expandable_columns/frontend/package-lock.json
+    
+    - name: Build frontend
+      run: |
+        cd streamlit_expandable_columns/frontend
+        npm ci
+        npm run build
+    
     - name: Install Playwright browsers
       run: |
         playwright install --with-deps firefox chromium
