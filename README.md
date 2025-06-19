@@ -24,7 +24,7 @@ Create resizable columns in Streamlit! This component provides `st.columns` func
 pip install streamlit-expandable-columns
 ```
 
-**Note**: This package requires Node.js and npm to build the frontend components during installation. If you don't have them installed, you'll see a warning during installation. Please install Node.js from [nodejs.org](https://nodejs.org/) and reinstall the package.
+**Note**: Packages installed from PyPI already include the compiled frontend so no additional tools are required. If you install from a source checkout (e.g. GitHub), Node.js and npm are needed to build the frontend assets.
 
 ### Basic Usage
 

@@ -10,8 +10,15 @@ with open(os.path.join(this_directory, "README.md"), encoding="utf-8") as f:
 
 def build_frontend():
     """Build the frontend assets during installation."""
+
     frontend_dir = os.path.join(this_directory, "streamlit_expandable_columns", "frontend")
-    
+    build_dir = os.path.join(frontend_dir, "build")
+
+    # Skip build if compiled assets already exist
+    if os.path.exists(build_dir) and os.listdir(build_dir):
+        print("Frontend already built. Skipping build.")
+        return True
+
     # Check if Node.js and npm are available
     try:
         subprocess.run(["node", "--version"], check=True, capture_output=True)
