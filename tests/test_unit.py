@@ -1,9 +1,10 @@
 """Unit tests for the streamlit_adjustable_columns component."""
 
-import pytest
-from unittest.mock import patch, MagicMock
-from streamlit_adjustable_columns import adjustable_columns
+from unittest.mock import MagicMock, patch
 
+import pytest
+
+from streamlit_adjustable_columns import adjustable_columns
 
 
 @pytest.mark.unit
