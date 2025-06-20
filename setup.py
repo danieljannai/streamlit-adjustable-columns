@@ -49,7 +49,7 @@ if any(arg in sys.argv for arg in ["install", "develop", "bdist_wheel", "sdist",
 
 setup(
     name="streamlit-expandable-columns",
-    version="0.1.1",
+    version="0.1.2",
     author="Daniel Jannai Epstein",
     description="A Streamlit custom component for creating columns with adjustable widths",
     long_description=long_description,
