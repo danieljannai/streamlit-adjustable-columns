@@ -7,6 +7,8 @@
 
 Create resizable columns in Streamlit! This component provides `st.columns` functionality with **draggable resize handles** that allow users to adjust column widths dynamically.
 
+![Adjustable Columns Demo](adjustable-columns-demo.gif)
+
 ## ✨ Features
 
 - **🎯 Drop-in Replacement**: Works exactly like `st.columns` with the same API
@@ -43,6 +45,14 @@ with col1:
 col2.write("This column can be resized!")
 col3.button("Settings")
 ```
+
+### ✅ Success Indicators
+
+You know it's working when you see:
+- ✅ Column headers with drag handles between them
+- ✅ Ability to drag column separators to resize
+- ✅ Column widths persist when you interact with other elements
+- ✅ Responsive behavior on different screen sizes
 
 ## 📖 API Reference
 
@@ -177,22 +187,53 @@ else:  # Main column is narrow
 
 ## 🔧 Development
 
+### Prerequisites
+
+- Python 3.9+
+- Node.js 18+
+- npm or yarn
+- Git
+
 ### Setup
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/streamlit-expandable-columns
+git clone https://github.com/danieljannai/streamlit-expandable-columns
 cd streamlit-expandable-columns
+
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install in development mode
 make install-dev
 
-# Start the frontend development server
-make frontend-dev
+# Or manually:
+pip install -e ".[dev]"
+cd streamlit_expandable_columns/frontend
+npm install
+cd ../..
+```
 
-# In another terminal, run Streamlit
+### Testing the Component
+
+```bash
+# Terminal 1: Start frontend development server
+cd streamlit_expandable_columns/frontend
+npm start
+
+# Terminal 2: Run the demo (make sure venv is activated)
+source venv/bin/activate
 streamlit run example.py
 ```
+
+### What You'll See
+
+1. **Frontend Dev Server**: http://localhost:3001
+   - This serves the interactive column resizer component
+
+2. **Streamlit App**: http://localhost:8501
+   - Your main app with the expandable columns
 
 ### Testing
 
@@ -235,6 +276,23 @@ make build
 make upload
 ```
 
+## 🐛 Troubleshooting
+
+### Component shows "Loading..." forever
+- Make sure the frontend dev server is running on port 3001
+- Check that `_RELEASE = False` in `streamlit_expandable_columns/__init__.py`
+
+### "Module not found" error
+- Make sure your virtual environment is activated: `source venv/bin/activate`
+- Reinstall dependencies: `pip install -e ".[dev]"`
+
+### Frontend won't start
+- Make sure Node.js and npm are installed
+- Delete `node_modules` and run `npm install` again
+
+### Port conflicts
+- If port 3001 or 8501 are busy, kill other processes or change ports in the configuration
+
 ## 🧪 Test Coverage
 
 The project includes comprehensive test coverage:
@@ -263,6 +321,8 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 7. Commit your changes (`git commit -m 'Add amazing feature'`)
 8. Push to the branch (`git push origin feature/amazing-feature`)
 9. Open a Pull Request
+
+For detailed contributing guidelines, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## 📝 License
 
