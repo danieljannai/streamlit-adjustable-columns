@@ -1,11 +1,11 @@
 import streamlit as st
 
-from streamlit_expandable_columns import expandable_columns
+from streamlit_adjustable_columns import adjustable_columns
 
-st.subheader("Test Expandable Columns with Width Tracking")
+st.subheader("Test Adjustable Columns with Width Tracking")
 
 # Columns with width tracking
-result = expandable_columns(
+result = adjustable_columns(
     3,
     labels=["Col A", "Col B", "Col C"],
     return_widths=True,

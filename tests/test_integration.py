@@ -1,67 +1,67 @@
-"""Integration tests for streamlit-expandable-columns component."""
+"""Integration tests for streamlit-adjustable-columns component."""
 
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-from streamlit_expandable_columns import expandable_columns
+from streamlit_adjustable_columns import adjustable_columns
 
 
 @pytest.mark.unit
-class TestExpandableColumnsIntegration:
-    """Integration tests for the expandable columns component."""
+class TestAdjustableColumnsIntegration:
+    """Integration tests for the adjustable columns component."""
 
     def test_component_import(self):
         """Test that the component can be imported successfully."""
-        from streamlit_expandable_columns import expandable_columns
+        from streamlit_adjustable_columns import adjustable_columns
 
-        assert callable(expandable_columns)
+        assert callable(adjustable_columns)
 
     def test_component_with_session_state(self):
         """Test component behavior with session state."""
-        with patch("streamlit_expandable_columns.st.session_state", {}):
-            with patch("streamlit_expandable_columns.st.columns") as mock_columns:
+        with patch("streamlit_adjustable_columns.st.session_state", {}):
+            with patch("streamlit_adjustable_columns.st.columns") as mock_columns:
                 mock_columns.return_value = [MagicMock(), MagicMock()]
 
                 # First call should initialize session state
-                result1 = expandable_columns(2, key="integration_test")
+                result1 = adjustable_columns(2, key="integration_test")
                 assert len(result1) == 2
 
                 # Second call should use existing session state
-                result2 = expandable_columns(2, key="integration_test")
+                result2 = adjustable_columns(2, key="integration_test")
                 assert len(result2) == 2
 
     def test_component_state_persistence(self):
         """Test that component state persists across calls."""
         session_state = {}
 
-        with patch("streamlit_expandable_columns.st.session_state", session_state):
+        with patch("streamlit_adjustable_columns.st.session_state", session_state):
             with patch(
-                "streamlit_expandable_columns._component_func"
+                "streamlit_adjustable_columns._component_func"
             ) as mock_component:
                 # Mock component returning custom widths
                 mock_component.return_value = {"widths": [1.5, 0.5]}
 
                 with patch(
-                    "streamlit_expandable_columns.st.columns"
+                    "streamlit_adjustable_columns.st.columns"
                 ) as mock_columns, patch(
-                    "streamlit_expandable_columns.st.markdown"
+                    "streamlit_adjustable_columns.st.markdown"
                 ), patch(
-                    "streamlit_expandable_columns.st.rerun"
+                    "streamlit_adjustable_columns.st.rerun"
                 ):
 
                     mock_columns.return_value = [MagicMock(), MagicMock()]
 
                     # First call
-                    result1 = expandable_columns(
+                    result1 = adjustable_columns(
                         2, return_widths=True, key="persist_test"
                     )
 
                     # State should be updated (note the correct session key format)
-                    assert "expandable_columns_widths_persist_test" in session_state
+                    assert "adjustable_columns_widths_persist_test" in session_state
 
                     # Second call should use persisted state
-                    result2 = expandable_columns(
+                    result2 = adjustable_columns(
                         2, return_widths=True, key="persist_test"
                     )
 
@@ -71,15 +71,15 @@ class TestExpandableColumnsIntegration:
 
     def test_different_spec_formats(self):
         """Test different ways to specify columns."""
-        with patch("streamlit_expandable_columns.st.columns") as mock_columns:
+        with patch("streamlit_adjustable_columns.st.columns") as mock_columns:
             mock_columns.return_value = [MagicMock()]
 
             # Integer spec
-            result1 = expandable_columns(1)
+            result1 = adjustable_columns(1)
             assert len(result1) == 1
 
             # List spec with single element
-            result2 = expandable_columns([1])
+            result2 = adjustable_columns([1])
             assert len(result2) == 1
 
             # List spec with multiple elements
@@ -88,26 +88,26 @@ class TestExpandableColumnsIntegration:
                 MagicMock(),
                 MagicMock(),
             ]
-            result3 = expandable_columns([2, 1, 1])
+            result3 = adjustable_columns([2, 1, 1])
             assert len(result3) == 3
 
     def test_labels_integration(self):
         """Test labels integration with the component."""
-        with patch("streamlit_expandable_columns._component_func") as mock_component:
+        with patch("streamlit_adjustable_columns._component_func") as mock_component:
             mock_component.return_value = {"widths": [1.0, 1.0]}
 
             with patch(
-                "streamlit_expandable_columns.st.columns"
+                "streamlit_adjustable_columns.st.columns"
             ) as mock_columns, patch(
-                "streamlit_expandable_columns.st.session_state", {}
+                "streamlit_adjustable_columns.st.session_state", {}
             ), patch(
-                "streamlit_expandable_columns.st.markdown"
+                "streamlit_adjustable_columns.st.markdown"
             ):
 
                 mock_columns.return_value = [MagicMock(), MagicMock()]
 
                 labels = ["📊 Dashboard", "⚙️ Settings"]
-                expandable_columns(2, labels=labels, key="labels_integration")
+                adjustable_columns(2, labels=labels, key="labels_integration")
 
                 # Component should receive the labels
                 mock_component.assert_called_once()
@@ -117,10 +117,10 @@ class TestExpandableColumnsIntegration:
 
     def test_parameter_forwarding(self):
         """Test that all st.columns parameters are forwarded correctly."""
-        with patch("streamlit_expandable_columns.st.columns") as mock_columns:
+        with patch("streamlit_adjustable_columns.st.columns") as mock_columns:
             mock_columns.return_value = [MagicMock(), MagicMock()]
 
-            expandable_columns(
+            adjustable_columns(
                 2,
                 gap="large",
                 vertical_alignment="center",
@@ -134,17 +134,17 @@ class TestExpandableColumnsIntegration:
             assert call_kwargs["vertical_alignment"] == "center"
             assert call_kwargs["border"] is True
 
-    @patch("streamlit_expandable_columns.st.columns")
-    @patch("streamlit_expandable_columns._component_func")
+    @patch("streamlit_adjustable_columns.st.columns")
+    @patch("streamlit_adjustable_columns._component_func")
     def test_width_calculation_and_application(self, mock_component, mock_columns):
         """Test that widths are calculated and applied correctly."""
         # Mock component returns custom widths
         custom_widths = [2.0, 1.0, 1.0]
         mock_component.return_value = {"widths": custom_widths}
 
-        with patch("streamlit_expandable_columns.st.session_state", {}), patch(
-            "streamlit_expandable_columns.st.markdown"
-        ), patch("streamlit_expandable_columns.st.rerun"):
+        with patch("streamlit_adjustable_columns.st.session_state", {}), patch(
+            "streamlit_adjustable_columns.st.markdown"
+        ), patch("streamlit_adjustable_columns.st.rerun"):
 
             mock_columns.return_value = [
                 MagicMock(),
@@ -152,7 +152,7 @@ class TestExpandableColumnsIntegration:
                 MagicMock(),
             ]
 
-            result = expandable_columns(3, return_widths=True, key="width_calc_test")
+            result = adjustable_columns(3, return_widths=True, key="width_calc_test")
 
             # Check that the returned widths match the component output
             assert result["widths"] == custom_widths
@@ -163,39 +163,39 @@ class TestExpandableColumnsIntegration:
 
     def test_error_handling(self):
         """Test error handling for invalid inputs."""
-        with patch("streamlit_expandable_columns.st.columns") as mock_columns:
+        with patch("streamlit_adjustable_columns.st.columns") as mock_columns:
             mock_columns.return_value = [MagicMock()]
 
             # These should not raise exceptions
             try:
-                expandable_columns(1)
-                expandable_columns([1])
-                expandable_columns(1, labels=["Test"])
-                expandable_columns(1, return_widths=True, key="error_test")
+                adjustable_columns(1)
+                adjustable_columns([1])
+                adjustable_columns(1, labels=["Test"])
+                adjustable_columns(1, return_widths=True, key="error_test")
             except Exception as e:
-                pytest.fail(f"expandable_columns raised an unexpected exception: {e}")
+                pytest.fail(f"adjustable_columns raised an unexpected exception: {e}")
 
     def test_key_uniqueness(self):
         """Test that different keys create separate state."""
         session_state = {}
 
-        with patch("streamlit_expandable_columns.st.session_state", session_state):
+        with patch("streamlit_adjustable_columns.st.session_state", session_state):
             with patch(
-                "streamlit_expandable_columns._component_func"
+                "streamlit_adjustable_columns._component_func"
             ) as mock_component:
                 mock_component.return_value = [1.0, 1.0]
 
-                with patch("streamlit_expandable_columns.st.columns") as mock_columns:
+                with patch("streamlit_adjustable_columns.st.columns") as mock_columns:
                     mock_columns.return_value = [MagicMock(), MagicMock()]
 
                     # Create two instances with different keys
-                    expandable_columns(2, key="key1")
-                    expandable_columns(2, key="key2")
+                    adjustable_columns(2, key="key1")
+                    adjustable_columns(2, key="key2")
 
                     # Should create separate session state entries
                     keys = [
                         key
                         for key in session_state.keys()
-                        if key.startswith("expandable_columns_")
+                        if key.startswith("adjustable_columns_")
                     ]
                     assert len(keys) >= 2

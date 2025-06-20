@@ -15,7 +15,7 @@ _RELEASE = True
 
 if not _RELEASE:
     _component_func = components.declare_component(
-        "streamlit_expandable_columns",
+        "streamlit_adjustable_columns",
         url="http://localhost:3001",
     )
 else:
@@ -37,11 +37,11 @@ else:
         )
 
     _component_func = components.declare_component(
-        "streamlit_expandable_columns", path=build_dir
+        "streamlit_adjustable_columns", path=build_dir
     )
 
 
-def expandable_columns(
+def adjustable_columns(
     spec=None,
     *,
     gap="small",
@@ -89,20 +89,20 @@ def expandable_columns(
     Examples
     --------
     Basic usage (returns just columns):
-    >>> col1, col2, col3 = expandable_columns(3, labels=["Main", "Side", "Tools"])
+    >>> col1, col2, col3 = adjustable_columns(3, labels=["Main", "Side", "Tools"])
     >>> with col1:
     ...     st.write("Column 1")
     >>> col2.write("Column 2")
     >>> col3.write("Column 3")
 
     With width information:
-    >>> result = expandable_columns([3, 1], labels=["Content", "Sidebar"], return_widths=True)
+    >>> result = adjustable_columns([3, 1], labels=["Content", "Sidebar"], return_widths=True)
     >>> col1, col2 = result['columns']
     >>> current_widths = result['widths']  # e.g., [2.5, 1.5] after resizing
     >>> st.write(f"Current ratios: {current_widths}")
 
     With all parameters:
-    >>> result = expandable_columns(
+    >>> result = adjustable_columns(
     ...     spec=[2, 1, 1],
     ...     gap="large",
     ...     vertical_alignment="center",
@@ -152,7 +152,7 @@ def expandable_columns(
         unique_id = key
 
     # Create session state key for storing current widths
-    session_key = f"expandable_columns_widths_{unique_id}"
+    session_key = f"adjustable_columns_widths_{unique_id}"
 
     # Initialize or get current widths from session state
     if session_key not in st.session_state:
@@ -195,7 +195,7 @@ def expandable_columns(
     alignment_css = """
     <style>
     /* Ensure the resize handles iframe has no extra spacing */
-    iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"] {
+    iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"] {
         border: none !important;
         background: transparent !important;
         margin: 0 !important;
@@ -203,16 +203,16 @@ def expandable_columns(
     }
 
     /* Remove any extra margins from the element container holding the iframe */
-    .element-container:has(iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]) {
+    .element-container:has(iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]) {
         margin-bottom: 0 !important;
     }
 
     /* Ensure the following columns have proper spacing */
-    .element-container:has(iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]) + div[data-testid="column"] {
+    .element-container:has(iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]) + div[data-testid="column"] {
         margin-top: 0 !important;
     }
 
-    .element-container:has(iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]) + div[data-testid="column"] ~ div[data-testid="column"] {
+    .element-container:has(iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]) + div[data-testid="column"] ~ div[data-testid="column"] {
         margin-top: 0 !important;
     }
     </style>
@@ -241,9 +241,3 @@ def expandable_columns(
         return {"columns": st_columns, "widths": current_widths}
     else:
         return st_columns
-
-
-# For backward compatibility - maintain the old function signature
-def st_expandable_columns(*args, **kwargs):
-    """Backward compatibility alias for expandable_columns."""
-    return expandable_columns(*args, **kwargs)

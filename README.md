@@ -1,7 +1,6 @@
-# 🎯 Streamlit Expandable Columns
+# 🎯 Streamlit Adjustable Columns
 
-[![PyPI version](https://badge.fury.io/py/streamlit-expandable-columns.svg)](https://badge.fury.io/py/streamlit-expandable-columns)
-[![Test](https://github.com/danieljannai/streamlit-expandable-columns/actions/workflows/test.yml/badge.svg)](https://github.com/danieljannai/streamlit-expandable-columns/actions/workflows/test.yml)
+[![PyPI version](https://badge.fury.io/py/streamlit-adjustable-columns.svg)](https://badge.fury.io/py/streamlit-adjustable-columns)
 
 **Version:** 0.1.2
 
@@ -25,7 +24,7 @@ Create resizable columns in Streamlit! This component provides `st.columns` func
 ### Installation
 
 ```bash
-pip install streamlit-expandable-columns
+pip install streamlit-adjustable-columns
 ```
 
 **Note**: Packages installed from PyPI already include the compiled frontend so no additional tools are required. If you install from a source checkout (e.g. GitHub), Node.js and npm are needed to build the frontend assets.
@@ -34,10 +33,10 @@ pip install streamlit-expandable-columns
 
 ```python
 import streamlit as st
-from streamlit_expandable_columns import expandable_columns
+from streamlit_adjustable_columns import adjustable_columns
 
 # Use exactly like st.columns - but with resize handles!
-col1, col2, col3 = expandable_columns(3, labels=["📊 Charts", "📋 Data", "⚙️ Settings"])
+col1, col2, col3 = adjustable_columns(3, labels=["📊 Charts", "📋 Data", "⚙️ Settings"])
 
 with col1:
     st.metric("Sales", "$1,234", "12%")
@@ -56,7 +55,7 @@ You know it's working when you see:
 
 ## 📖 API Reference
 
-### `expandable_columns(spec, *, gap="small", vertical_alignment="top", border=False, labels=None, return_widths=False, key=None)`
+### `adjustable_columns(spec, *, gap="small", vertical_alignment="top", border=False, labels=None, return_widths=False, key=None)`
 
 Creates resizable columns with draggable boundaries.
 
@@ -79,7 +78,7 @@ Creates resizable columns with draggable boundaries.
 
 ## 🎮 How to Resize
 
-1. **Look for resize handles** above each set of expandable columns
+1. **Look for resize handles** above each set of adjustable columns
 2. **Hover over the boundaries** between column areas - you'll see resize cursors
 3. **Click and drag** the handles to adjust column widths
 4. **Release** to apply changes - they persist across app reruns!
@@ -90,7 +89,7 @@ Creates resizable columns with draggable boundaries.
 
 ```python
 # Create a dashboard with resizable main content and sidebar
-main, sidebar = expandable_columns([4, 1], labels=["📊 Dashboard", "⚙️ Controls"])
+main, sidebar = adjustable_columns([4, 1], labels=["📊 Dashboard", "⚙️ Controls"])
 
 with main:
     st.subheader("Analytics Overview")
@@ -109,7 +108,7 @@ with sidebar:
 
 ```python
 # Track column widths for dynamic layouts
-result = expandable_columns([2, 1], labels=["Content", "Sidebar"], return_widths=True)
+result = adjustable_columns([2, 1], labels=["Content", "Sidebar"], return_widths=True)
 content, sidebar = result['columns']
 current_widths = result['widths']
 
@@ -126,8 +125,8 @@ with sidebar:
 
 ```python
 # Each set of columns needs a unique key
-cols1 = expandable_columns(3, labels=["A", "B", "C"], key="top")
-cols2 = expandable_columns([1, 2], labels=["Left", "Right"], key="bottom")
+cols1 = adjustable_columns(3, labels=["A", "B", "C"], key="top")
+cols2 = adjustable_columns([1, 2], labels=["Left", "Right"], key="bottom")
 
 # First row
 cols1[0].metric("Metric 1", "100")
@@ -142,7 +141,7 @@ cols2[1].write("Content area")
 ### All Parameters
 
 ```python
-columns = expandable_columns(
+columns = adjustable_columns(
     spec=[3, 2, 1],                    # Custom width ratios
     gap="large",                       # Large spacing
     vertical_alignment="center",       # Center-align content
@@ -163,7 +162,7 @@ widths = columns['widths']
 Customize the labels shown in resize handles:
 
 ```python
-cols = expandable_columns(
+cols = adjustable_columns(
     3, 
     labels=["📈 Analytics", "🛠️ Tools", "📱 Mobile"]
 )
@@ -174,7 +173,7 @@ cols = expandable_columns(
 Use width information for responsive behavior:
 
 ```python
-result = expandable_columns([2, 1], return_widths=True)
+result = adjustable_columns([2, 1], return_widths=True)
 main_col, side_col = result['columns']
 widths = result['widths']
 
@@ -198,8 +197,8 @@ else:  # Main column is narrow
 
 ```bash
 # Clone the repository
-git clone https://github.com/danieljannai/streamlit-expandable-columns
-cd streamlit-expandable-columns
+git clone https://github.com/danieljannai/streamlit-adjustable-columns
+cd streamlit-adjustable-columns
 
 # Create virtual environment
 python3 -m venv venv
@@ -210,7 +209,7 @@ make install-dev
 
 # Or manually:
 pip install -e ".[dev]"
-cd streamlit_expandable_columns/frontend
+cd streamlit_adjustable_columns/frontend
 npm install
 cd ../..
 ```
@@ -219,7 +218,7 @@ cd ../..
 
 ```bash
 # Terminal 1: Start frontend development server
-make frontend-dev  # Or: cd streamlit_expandable_columns/frontend && npm start
+make frontend-dev  # Or: cd streamlit_adjustable_columns/frontend && npm start
 
 # Terminal 2: Run the demo (make sure venv is activated)
 source venv/bin/activate
@@ -232,7 +231,7 @@ streamlit run example.py
    - This serves the interactive column resizer component
 
 2. **Streamlit App**: http://localhost:8501
-   - Your main app with the expandable columns
+   - Your main app with the adjustable columns
 
 ### Testing
 
@@ -249,7 +248,7 @@ make test-unit
 make test-e2e
 
 # Run with coverage
-pytest --cov=streamlit_expandable_columns
+pytest --cov=streamlit_adjustable_columns
 ```
 
 ### Code Quality
@@ -279,7 +278,7 @@ make upload
 
 ### Component shows "Loading..." forever
 - Make sure the frontend dev server is running on port 3001
-- Check that `_RELEASE = False` in `streamlit_expandable_columns/__init__.py`
+- Check that `_RELEASE = False` in `streamlit_adjustable_columns/__init__.py`
 
 ### "Module not found" error
 - Make sure your virtual environment is activated: `source venv/bin/activate`

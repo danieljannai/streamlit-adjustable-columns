@@ -1,11 +1,11 @@
 import streamlit as st
 
-from streamlit_expandable_columns import expandable_columns
+from streamlit_adjustable_columns import adjustable_columns
 
-st.subheader("Test Expandable Columns with All Parameters")
+st.subheader("Test Adjustable Columns with All Parameters")
 
 # Columns with all parameters
-result = expandable_columns(
+result = adjustable_columns(
     spec=[2, 1, 1],
     gap="large",
     vertical_alignment="center",

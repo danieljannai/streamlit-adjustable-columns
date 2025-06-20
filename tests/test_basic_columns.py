@@ -27,12 +27,12 @@ def go_to_app(page: Page, streamlit_app: StreamlitRunner):
 
 @pytest.mark.e2e
 def test_should_render_basic_columns(page: Page):
-    """Test that basic expandable columns render correctly."""
-    expect(page.get_by_text("Test Basic Expandable Columns")).to_be_visible()
+    """Test that basic adjustable columns render correctly."""
+    expect(page.get_by_text("Test Basic Adjustable Columns")).to_be_visible()
 
     # Check that the iframe component is rendered
     iframe_component = page.locator(
-        'iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]'
+        'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]'
     ).nth(0)
     expect(iframe_component).to_be_visible()
 
@@ -43,7 +43,7 @@ def test_should_render_basic_columns(page: Page):
 
     # Check that resize handles are present in the iframe
     iframe_frame = page.frame_locator(
-        'iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]'
+        'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]'
     )
     resize_handles = iframe_frame.locator(".resize-handle")
     expect(resize_handles.first).to_be_visible()
@@ -76,12 +76,12 @@ def test_should_render_column_content(page: Page):
 def test_resize_handle_interaction(page: Page):
     """Test that resize handles can be interacted with."""
     iframe_component = page.locator(
-        'iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]'
+        'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]'
     ).nth(0)
     expect(iframe_component).to_be_visible()
 
     iframe_frame = page.frame_locator(
-        'iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]'
+        'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]'
     )
 
     # Get the first resize handle

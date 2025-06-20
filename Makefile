@@ -1,4 +1,4 @@
-# Makefile for streamlit-expandable-columns development
+# Makefile for streamlit-adjustable-columns development
 
 .PHONY: help install install-dev test test-unit test-e2e lint format clean build upload bump-patch bump-minor bump-major
 
@@ -36,20 +36,20 @@ test-e2e: frontend-build
 	pytest -v -m "e2e" --browser firefox --browser chromium
 
 lint:
-	flake8 streamlit_expandable_columns tests --max-line-length=88
-	black --check streamlit_expandable_columns tests
-	isort --check-only streamlit_expandable_columns tests
+	flake8 streamlit_adjustable_columns tests --max-line-length=88
+	black --check streamlit_adjustable_columns tests
+	isort --check-only streamlit_adjustable_columns tests
 
 format:
-	black streamlit_expandable_columns tests
-	isort streamlit_expandable_columns tests
+	black streamlit_adjustable_columns tests
+	isort streamlit_adjustable_columns tests
 
 clean:
 	rm -rf build/
 	rm -rf dist/
-	rm -rf streamlit_expandable_columns/frontend/node_modules/
-	rm -rf streamlit_expandable_columns/frontend/build/
-	rm -rf streamlit_expandable_columns/frontend/dist/
+	rm -rf streamlit_adjustable_columns/frontend/node_modules/
+	rm -rf streamlit_adjustable_columns/frontend/build/
+	rm -rf streamlit_adjustable_columns/frontend/dist/
 	rm -rf *.egg-info/
 	find . -type d -name __pycache__ -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
@@ -75,10 +75,10 @@ bump-major:
 
 # Frontend development
 frontend-install:
-	cd streamlit_expandable_columns/frontend && npm install
+	cd streamlit_adjustable_columns/frontend && npm install
 
 frontend-build: frontend-install
-	cd streamlit_expandable_columns/frontend && npm run build
+	cd streamlit_adjustable_columns/frontend && npm run build
 
 frontend-dev:
-	cd streamlit_expandable_columns/frontend && npm start 
+	cd streamlit_adjustable_columns/frontend && npm start 

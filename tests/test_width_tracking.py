@@ -31,7 +31,7 @@ def go_to_app(page: Page, streamlit_app: StreamlitRunner):
 def test_should_display_width_information(page: Page):
     """Test that width information is displayed."""
     expect(
-        page.get_by_text("Test Expandable Columns with Width Tracking")
+        page.get_by_text("Test Adjustable Columns with Width Tracking")
     ).to_be_visible()
 
     # Check that width ratios are displayed
@@ -46,13 +46,13 @@ def test_should_render_width_tracking_columns(page: Page):
     """Test that columns with width tracking render correctly."""
     # Check that the iframe component is rendered
     iframe_component = page.locator(
-        'iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]'
+        'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]'
     ).nth(0)
     expect(iframe_component).to_be_visible()
 
     # Check that column labels are present
     iframe_frame = page.frame_locator(
-        'iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]'
+        'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]'
     )
     expect(iframe_frame.get_by_text("Col A")).to_be_visible()
     expect(iframe_frame.get_by_text("Col B")).to_be_visible()
@@ -99,7 +99,7 @@ def test_width_values_sum_to_reasonable_total(page: Page):
 def test_width_tracking_resize_handles(page: Page):
     """Test that resize handles work with width tracking."""
     iframe_frame = page.frame_locator(
-        'iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]'
+        'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]'
     )
 
     # Should have 2 resize handles for 3 columns

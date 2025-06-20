@@ -1,6 +1,6 @@
-# Contributing to Streamlit Expandable Columns
+# Contributing to Streamlit Adjustable Columns
 
-Thank you for your interest in contributing to Streamlit Expandable Columns! This document provides guidelines and information for contributors.
+Thank you for your interest in contributing to Streamlit Adjustable Columns! This document provides guidelines and information for contributors.
 
 ## 🚀 Getting Started
 
@@ -15,8 +15,8 @@ Thank you for your interest in contributing to Streamlit Expandable Columns! Thi
 
 1. **Fork and clone the repository:**
    ```bash
-   git clone https://github.com/your-username/streamlit-expandable-columns.git
-   cd streamlit-expandable-columns
+   git clone https://github.com/danieljannai/streamlit-adjustable-columns.git
+   cd streamlit-adjustable-columns
    ```
 
 2. **Set up the development environment:**
@@ -32,7 +32,7 @@ Thank you for your interest in contributing to Streamlit Expandable Columns! Thi
 3. **Start development servers:**
    ```bash
    # Terminal 1: Frontend dev server
-   cd streamlit_expandable_columns/frontend
+   cd streamlit_adjustable_columns/frontend
    npm start
    
    # Terminal 2: Streamlit app
@@ -55,7 +55,7 @@ make test-unit
 make test-e2e
 
 # Run with coverage
-pytest --cov=streamlit_expandable_columns
+pytest --cov=streamlit_adjustable_columns
 ```
 
 ### Test Structure
@@ -217,7 +217,7 @@ When suggesting features:
 
 ## 🚀 Release Process
 
-This section outlines the steps to prepare the streamlit-expandable-columns package for release.
+This section outlines the steps to prepare the streamlit-adjustable-columns package for release.
 
 ### 🔧 Development Infrastructure
 

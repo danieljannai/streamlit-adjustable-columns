@@ -40,11 +40,11 @@ jobs:
       with:
         node-version: '18'
         cache: 'npm'
-        cache-dependency-path: streamlit_expandable_columns/frontend/package-lock.json
+        cache-dependency-path: streamlit_adjustable_columns/frontend/package-lock.json
     
     - name: Build frontend
       run: |
-        cd streamlit_expandable_columns/frontend
+        cd streamlit_adjustable_columns/frontend
         npm ci
         npm run build
     
@@ -54,16 +54,16 @@ jobs:
     
     - name: Lint with flake8
       run: |
-        flake8 streamlit_expandable_columns tests --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 streamlit_expandable_columns tests --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
+        flake8 streamlit_adjustable_columns tests --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 streamlit_adjustable_columns tests --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
     
     - name: Check code formatting with black
       run: |
-        black --check streamlit_expandable_columns tests
+        black --check streamlit_adjustable_columns tests
     
     - name: Check import sorting with isort
       run: |
-        isort --check-only streamlit_expandable_columns tests
+        isort --check-only streamlit_adjustable_columns tests
     
     - name: Run unit tests
       run: |

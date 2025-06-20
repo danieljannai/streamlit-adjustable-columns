@@ -11,7 +11,7 @@ with open(os.path.join(this_directory, "README.md"), encoding="utf-8") as f:
 def build_frontend():
     """Build the frontend assets during installation."""
 
-    frontend_dir = os.path.join(this_directory, "streamlit_expandable_columns", "frontend")
+    frontend_dir = os.path.join(this_directory, "streamlit_adjustable_columns", "frontend")
     build_dir = os.path.join(frontend_dir, "build")
 
     # Skip build if compiled assets already exist
@@ -48,13 +48,13 @@ if any(arg in sys.argv for arg in ["install", "develop", "bdist_wheel", "sdist",
     build_frontend()
 
 setup(
-    name="streamlit-expandable-columns",
+    name="streamlit-adjustable-columns",
     version="0.1.2",
     author="Daniel Jannai Epstein",
     description="A Streamlit custom component for creating columns with adjustable widths",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/danieljannai/streamlit-expandable-columns",
+    url="https://github.com/danieljannai/streamlit-adjustable-columns",
     packages=find_packages(),
     include_package_data=True,
     classifiers=[

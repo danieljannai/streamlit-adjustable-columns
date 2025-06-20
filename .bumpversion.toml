@@ -18,12 +18,12 @@ search = 'version="{current_version}"'
 replace = 'version="{new_version}"'
 
 [[tool.bumpversion.files]]
-filename = "streamlit_expandable_columns/frontend/package.json"
+filename = "streamlit_adjustable_columns/frontend/package.json"
 search = '"version": "{current_version}"'
 replace = '"version": "{new_version}"'
 
 [[tool.bumpversion.files]]
-filename = "streamlit_expandable_columns/__init__.py"
+filename = "streamlit_adjustable_columns/__init__.py"
 search = '__version__ = "{current_version}"'
 replace = '__version__ = "{new_version}"'
 

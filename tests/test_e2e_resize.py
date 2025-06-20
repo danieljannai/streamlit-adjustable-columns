@@ -29,7 +29,7 @@ def go_to_app(page: Page, streamlit_app: StreamlitRunner):
     page.get_by_role("img", name="Running...").is_hidden(timeout=60000)
     # Wait for the component iframe to be attached to the DOM
     page.wait_for_selector(
-        'iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]',
+        'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]',
         state="attached",
         timeout=60000,
     )
@@ -50,7 +50,7 @@ def test_column_resize(page: Page):
     """
     # Locate the component iframe and the first resize handle
     iframe = page.frame_locator(
-        'iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]'
+        'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]'
     )
     handle = iframe.locator(".resize-handle").first
     expect(handle).to_be_visible()

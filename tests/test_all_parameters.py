@@ -29,7 +29,7 @@ def go_to_app(page: Page, streamlit_app: StreamlitRunner):
 def test_should_render_all_parameters(page: Page):
     """Test that component renders with all parameters."""
     expect(
-        page.get_by_text("Test Expandable Columns with All Parameters")
+        page.get_by_text("Test Adjustable Columns with All Parameters")
     ).to_be_visible()
 
     # Check that parameter information is displayed
@@ -39,7 +39,7 @@ def test_should_render_all_parameters(page: Page):
 
     # Check that the iframe component is rendered
     iframe_component = page.locator(
-        'iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]'
+        'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]'
     ).nth(0)
     expect(iframe_component).to_be_visible()
 
@@ -52,7 +52,7 @@ def test_should_display_custom_labels_and_widths(page: Page):
 
     # Check that custom labels are present in the iframe
     iframe_frame = page.frame_locator(
-        'iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]'
+        'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]'
     )
     expect(iframe_frame.get_by_text("📊 Main")).to_be_visible()
     expect(iframe_frame.get_by_text("📋 Info")).to_be_visible()
@@ -79,7 +79,7 @@ def test_should_render_complex_content(page: Page):
 def test_should_apply_custom_ratios_with_all_params(page: Page):
     """Test that custom ratios [2, 1, 1] are applied correctly."""
     iframe_frame = page.frame_locator(
-        'iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]'
+        'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]'
     )
 
     # Get column containers if available
@@ -109,7 +109,7 @@ def test_should_apply_custom_ratios_with_all_params(page: Page):
 def test_all_params_resize_handles(page: Page):
     """Test that resize handles work with all parameters."""
     iframe_frame = page.frame_locator(
-        'iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]'
+        'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]'
     )
 
     # Should have 2 resize handles for 3 columns

@@ -1,11 +1,11 @@
 import streamlit as st
 
-from streamlit_expandable_columns import expandable_columns
+from streamlit_adjustable_columns import adjustable_columns
 
-st.subheader("Test Expandable Columns with Labels")
+st.subheader("Test Adjustable Columns with Labels")
 
 # Columns with custom labels
-col1, col2, col3 = expandable_columns(
+col1, col2, col3 = adjustable_columns(
     3, labels=["📊 Charts", "📋 Data", "⚙️ Settings"], key="labels_test"
 )
 

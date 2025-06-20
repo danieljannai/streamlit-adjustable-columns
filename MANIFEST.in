@@ -1,7 +1,7 @@
-include streamlit_expandable_columns/frontend/package.json
-include streamlit_expandable_columns/frontend/package-lock.json
-include streamlit_expandable_columns/frontend/webpack.config.js
-include streamlit_expandable_columns/frontend/src/*
-include streamlit_expandable_columns/frontend/public/*
-include streamlit_expandable_columns/frontend/build/* 
+include streamlit_adjustable_columns/frontend/package.json
+include streamlit_adjustable_columns/frontend/package-lock.json
+include streamlit_adjustable_columns/frontend/webpack.config.js
+include streamlit_adjustable_columns/frontend/src/*
+include streamlit_adjustable_columns/frontend/public/*
+include streamlit_adjustable_columns/frontend/build/* 
 include .bumpversion.toml

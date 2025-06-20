@@ -1,11 +1,11 @@
 import streamlit as st
 
-from streamlit_expandable_columns import expandable_columns
+from streamlit_adjustable_columns import adjustable_columns
 
-st.subheader("Test Basic Expandable Columns")
+st.subheader("Test Basic Adjustable Columns")
 
 # Basic 3-column layout
-col1, col2, col3 = expandable_columns(3, key="basic_test")
+col1, col2, col3 = adjustable_columns(3, key="basic_test")
 
 with col1:
     st.write("Column 1 Content")

@@ -29,18 +29,18 @@ def go_to_app(page: Page, streamlit_app: StreamlitRunner):
 def test_should_render_custom_ratios(page: Page):
     """Test that custom width ratios are applied correctly."""
     expect(
-        page.get_by_text("Test Expandable Columns with Custom Ratios")
+        page.get_by_text("Test Adjustable Columns with Custom Ratios")
     ).to_be_visible()
 
     # Check that the iframe component is rendered
     iframe_component = page.locator(
-        'iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]'
+        'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]'
     ).nth(0)
     expect(iframe_component).to_be_visible()
 
     # Check that custom labels for ratios are present
     iframe_frame = page.frame_locator(
-        'iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]'
+        'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]'
     )
     expect(iframe_frame.get_by_text("Main Content")).to_be_visible()
     expect(iframe_frame.get_by_text("Sidebar")).to_be_visible()
@@ -50,7 +50,7 @@ def test_should_render_custom_ratios(page: Page):
 def test_should_apply_width_ratios(page: Page):
     """Test that 3:1 width ratio is applied correctly."""
     iframe_frame = page.frame_locator(
-        'iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]'
+        'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]'
     )
 
     # Get the column containers (if they have identifiable classes)
@@ -87,7 +87,7 @@ def test_should_render_ratio_content(page: Page):
 def test_single_resize_handle_for_two_columns(page: Page):
     """Test that there's only one resize handle for two columns."""
     iframe_frame = page.frame_locator(
-        'iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]'
+        'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]'
     )
 
     # Should have exactly 1 resize handle for 2 columns

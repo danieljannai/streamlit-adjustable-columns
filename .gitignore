@@ -34,8 +34,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # Frontend build output
-streamlit_expandable_columns/frontend/build/
-streamlit_expandable_columns/frontend/dist/
+streamlit_adjustable_columns/frontend/build/
+streamlit_adjustable_columns/frontend/dist/
 
 # IDE files
 .vscode/

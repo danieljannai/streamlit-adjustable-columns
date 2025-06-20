@@ -1,4 +1,4 @@
-"""Pytest configuration and fixtures for streamlit-expandable-columns tests."""
+"""Pytest configuration and fixtures for streamlit-adjustable-columns tests."""
 
 import pytest
 from playwright.sync_api import sync_playwright  # noqa: F401
@@ -29,7 +29,7 @@ def wait_for_iframe(page, request):
     if "e2e" in request.keywords:
         # Wait up to 30 seconds for the iframe to be attached to the DOM
         page.wait_for_selector(
-            'iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]',
+            'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]',
             timeout=30000,
             state="attached",
         )

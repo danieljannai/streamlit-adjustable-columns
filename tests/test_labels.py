@@ -28,17 +28,17 @@ def go_to_app(page: Page, streamlit_app: StreamlitRunner):
 @pytest.mark.e2e
 def test_should_render_custom_labels(page: Page):
     """Test that custom labels are displayed correctly."""
-    expect(page.get_by_text("Test Expandable Columns with Labels")).to_be_visible()
+    expect(page.get_by_text("Test Adjustable Columns with Labels")).to_be_visible()
 
     # Check that the iframe component is rendered
     iframe_component = page.locator(
-        'iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]'
+        'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]'
     ).nth(0)
     expect(iframe_component).to_be_visible()
 
     # Check that custom labels are present in the iframe
     iframe_frame = page.frame_locator(
-        'iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]'
+        'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]'
     )
 
     # Check for custom labels with emojis
@@ -63,7 +63,7 @@ def test_should_render_labeled_column_content(page: Page):
 def test_labels_with_resize_handles(page: Page):
     """Test that labels work properly with resize handles."""
     iframe_frame = page.frame_locator(
-        'iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]'
+        'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]'
     )
 
     # Check that labels are positioned above resize handles

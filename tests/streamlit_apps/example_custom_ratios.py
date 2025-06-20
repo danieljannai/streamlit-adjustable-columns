@@ -1,11 +1,11 @@
 import streamlit as st
 
-from streamlit_expandable_columns import expandable_columns
+from streamlit_adjustable_columns import adjustable_columns
 
-st.subheader("Test Expandable Columns with Custom Ratios")
+st.subheader("Test Adjustable Columns with Custom Ratios")
 
 # Columns with custom width ratios
-col1, col2 = expandable_columns(
+col1, col2 = adjustable_columns(
     [3, 1], labels=["Main Content", "Sidebar"], key="ratios_test"
 )
 
