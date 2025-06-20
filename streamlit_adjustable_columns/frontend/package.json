@@ -1,6 +1,6 @@
 {
-  "name": "streamlit-expandable-columns-frontend",
-  "version": "0.1.0",
+  "name": "streamlit-adjustable-columns-frontend",
+  "version": "0.1.2",
   "private": true,
   "dependencies": {
     "streamlit-component-lib": "^1.4.0"
@@ -15,7 +15,8 @@
     "webpack-dev-server": "^4.7.0",
     "@babel/core": "^7.17.0",
     "@babel/preset-env": "^7.17.0",
-    "babel-loader": "^8.2.0"
+    "babel-loader": "^8.2.0",
+    "html-webpack-plugin": "^5.6.3"
   },
   "browserslist": {
     "production": [

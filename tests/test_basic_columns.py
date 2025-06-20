@@ -7,7 +7,9 @@ from playwright.sync_api import Page, expect
 from tests import ROOT_DIRECTORY
 from tests.e2e_utils import StreamlitRunner
 
-BASIC_EXAMPLE_FILE = os.path.join(ROOT_DIRECTORY, "tests", "streamlit_apps", "example_basic_columns.py")
+BASIC_EXAMPLE_FILE = os.path.join(
+    ROOT_DIRECTORY, "tests", "streamlit_apps", "example_basic_columns.py"
+)
 
 
 @pytest.fixture(autouse=True, scope="module")
@@ -25,21 +27,25 @@ def go_to_app(page: Page, streamlit_app: StreamlitRunner):
 
 @pytest.mark.e2e
 def test_should_render_basic_columns(page: Page):
-    """Test that basic expandable columns render correctly."""
-    expect(page.get_by_text("Test Basic Expandable Columns")).to_be_visible()
+    """Test that basic adjustable columns render correctly."""
+    expect(page.get_by_text("Test Basic Adjustable Columns")).to_be_visible()
 
     # Check that the iframe component is rendered
-    iframe_component = page.locator('iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]').nth(0)
+    iframe_component = page.locator(
+        'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]'
+    ).nth(0)
     expect(iframe_component).to_be_visible()
 
     # Check iframe dimensions
     iframe_box = iframe_component.bounding_box()
-    assert iframe_box['width'] > 0
-    assert iframe_box['height'] > 0
+    assert iframe_box["width"] > 0
+    assert iframe_box["height"] > 0
 
     # Check that resize handles are present in the iframe
-    iframe_frame = page.frame_locator('iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]')
-    resize_handles = iframe_frame.locator('.resize-handle')
+    iframe_frame = page.frame_locator(
+        'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]'
+    )
+    resize_handles = iframe_frame.locator(".resize-handle")
     expect(resize_handles.first).to_be_visible()
 
     # Check that multiple handles exist (should be 2 for 3 columns)
@@ -69,13 +75,17 @@ def test_should_render_column_content(page: Page):
 @pytest.mark.e2e
 def test_resize_handle_interaction(page: Page):
     """Test that resize handles can be interacted with."""
-    iframe_component = page.locator('iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]').nth(0)
+    iframe_component = page.locator(
+        'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]'
+    ).nth(0)
     expect(iframe_component).to_be_visible()
 
-    iframe_frame = page.frame_locator('iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]')
-    
+    iframe_frame = page.frame_locator(
+        'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]'
+    )
+
     # Get the first resize handle
-    first_handle = iframe_frame.locator('.resize-handle').first
+    first_handle = iframe_frame.locator(".resize-handle").first
     expect(first_handle).to_be_visible()
 
     # Check that handle has proper cursor styling
@@ -84,6 +94,6 @@ def test_resize_handle_interaction(page: Page):
 
     # Test hover state
     first_handle.hover()
-    
+
     # The handle should still be visible after hover
-    expect(first_handle).to_be_visible() 
+    expect(first_handle).to_be_visible()

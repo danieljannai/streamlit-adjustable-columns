@@ -1,3 +1,4 @@
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
 module.exports = {
@@ -20,6 +21,11 @@ module.exports = {
       }
     ]
   },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: 'public/index.html', // Use your existing file
+    })
+  ],
   resolve: {
     fallback: {
       "util": false
@@ -35,4 +41,4 @@ module.exports = {
     },
     allowedHosts: "all"
   }
-}; 
+};

@@ -1,7 +1,7 @@
-"""Pytest configuration and fixtures for streamlit-expandable-columns tests."""
+"""Pytest configuration and fixtures for streamlit-adjustable-columns tests."""
 
 import pytest
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright  # noqa: F401
 
 
 @pytest.fixture(scope="session")
@@ -14,7 +14,7 @@ def browser_context_args(browser_context_args):
     }
 
 
-@pytest.fixture(scope="session") 
+@pytest.fixture(scope="session")
 def browser_type_launch_args(browser_type_launch_args):
     """Configure browser launch arguments."""
     return {
@@ -26,19 +26,20 @@ def browser_type_launch_args(browser_type_launch_args):
 @pytest.fixture(autouse=True)
 def wait_for_iframe(page, request):
     """Wait for the component iframe to load before each e2e test."""
-    if 'e2e' in request.keywords:
+    if "e2e" in request.keywords:
         # Wait up to 30 seconds for the iframe to be attached to the DOM
-        page.wait_for_selector('iframe[title="streamlit_expandable_columns.streamlit_expandable_columns"]', timeout=30000, state="attached")
+        page.wait_for_selector(
+            'iframe[title="streamlit_adjustable_columns.streamlit_adjustable_columns"]',
+            timeout=30000,
+            state="attached",
+        )
 
 
 def pytest_configure(config):
     """Configure pytest with custom markers."""
     config.addinivalue_line(
-        "markers", "slow: marks tests as slow (deselect with '-m \"not slow\"')"
+        "markers",
+        "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     )
-    config.addinivalue_line(
-        "markers", "e2e: marks tests as end-to-end tests"
-    )
-    config.addinivalue_line(
-        "markers", "unit: marks tests as unit tests"
-    ) 
+    config.addinivalue_line("markers", "e2e: marks tests as end-to-end tests")
+    config.addinivalue_line("markers", "unit: marks tests as unit tests")

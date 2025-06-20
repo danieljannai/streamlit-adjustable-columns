@@ -1,9 +1,12 @@
-# 🎯 Streamlit Expandable Columns
+# 🎯 Streamlit Adjustable Columns
 
-[![PyPI version](https://badge.fury.io/py/streamlit-expandable-columns.svg)](https://badge.fury.io/py/streamlit-expandable-columns)
-[![Test](https://github.com/danieljannai/streamlit-expandable-columns/actions/workflows/test.yml/badge.svg)](https://github.com/danieljannai/streamlit-expandable-columns/actions/workflows/test.yml)
+[![PyPI version](https://badge.fury.io/py/streamlit-adjustable-columns.svg)](https://badge.fury.io/py/streamlit-adjustable-columns)
+
+**Version:** 0.1.2
 
 Create resizable columns in Streamlit! This component provides `st.columns` functionality with **draggable resize handles** that allow users to adjust column widths dynamically.
+
+![Adjustable Columns Demo](adjustable-columns-demo.gif)
 
 ## ✨ Features
 
@@ -21,19 +24,19 @@ Create resizable columns in Streamlit! This component provides `st.columns` func
 ### Installation
 
 ```bash
-pip install streamlit-expandable-columns
+pip install streamlit-adjustable-columns
 ```
 
-**Note**: This package requires Node.js and npm to build the frontend components during installation. If you don't have them installed, you'll see a warning during installation. Please install Node.js from [nodejs.org](https://nodejs.org/) and reinstall the package.
+**Note**: Packages installed from PyPI already include the compiled frontend so no additional tools are required. If you install from a source checkout (e.g. GitHub), Node.js and npm are needed to build the frontend assets.
 
 ### Basic Usage
 
 ```python
 import streamlit as st
-from streamlit_expandable_columns import expandable_columns
+from streamlit_adjustable_columns import adjustable_columns
 
 # Use exactly like st.columns - but with resize handles!
-col1, col2, col3 = expandable_columns(3, labels=["📊 Charts", "📋 Data", "⚙️ Settings"])
+col1, col2, col3 = adjustable_columns(3, labels=["📊 Charts", "📋 Data", "⚙️ Settings"])
 
 with col1:
     st.metric("Sales", "$1,234", "12%")
@@ -42,9 +45,17 @@ col2.write("This column can be resized!")
 col3.button("Settings")
 ```
 
+### ✅ Success Indicators
+
+You know it's working when you see:
+- ✅ Column headers with drag handles between them
+- ✅ Ability to drag column separators to resize
+- ✅ Column widths persist when you interact with other elements
+- ✅ Responsive behavior on different screen sizes
+
 ## 📖 API Reference
 
-### `expandable_columns(spec, *, gap="small", vertical_alignment="top", border=False, labels=None, return_widths=False, key=None)`
+### `adjustable_columns(spec, *, gap="small", vertical_alignment="top", border=False, labels=None, return_widths=False, key=None)`
 
 Creates resizable columns with draggable boundaries.
 
@@ -67,7 +78,7 @@ Creates resizable columns with draggable boundaries.
 
 ## 🎮 How to Resize
 
-1. **Look for resize handles** above each set of expandable columns
+1. **Look for resize handles** above each set of adjustable columns
 2. **Hover over the boundaries** between column areas - you'll see resize cursors
 3. **Click and drag** the handles to adjust column widths
 4. **Release** to apply changes - they persist across app reruns!
@@ -78,7 +89,7 @@ Creates resizable columns with draggable boundaries.
 
 ```python
 # Create a dashboard with resizable main content and sidebar
-main, sidebar = expandable_columns([4, 1], labels=["📊 Dashboard", "⚙️ Controls"])
+main, sidebar = adjustable_columns([4, 1], labels=["📊 Dashboard", "⚙️ Controls"])
 
 with main:
     st.subheader("Analytics Overview")
@@ -97,7 +108,7 @@ with sidebar:
 
 ```python
 # Track column widths for dynamic layouts
-result = expandable_columns([2, 1], labels=["Content", "Sidebar"], return_widths=True)
+result = adjustable_columns([2, 1], labels=["Content", "Sidebar"], return_widths=True)
 content, sidebar = result['columns']
 current_widths = result['widths']
 
@@ -114,8 +125,8 @@ with sidebar:
 
 ```python
 # Each set of columns needs a unique key
-cols1 = expandable_columns(3, labels=["A", "B", "C"], key="top")
-cols2 = expandable_columns([1, 2], labels=["Left", "Right"], key="bottom")
+cols1 = adjustable_columns(3, labels=["A", "B", "C"], key="top")
+cols2 = adjustable_columns([1, 2], labels=["Left", "Right"], key="bottom")
 
 # First row
 cols1[0].metric("Metric 1", "100")
@@ -130,7 +141,7 @@ cols2[1].write("Content area")
 ### All Parameters
 
 ```python
-columns = expandable_columns(
+columns = adjustable_columns(
     spec=[3, 2, 1],                    # Custom width ratios
     gap="large",                       # Large spacing
     vertical_alignment="center",       # Center-align content
@@ -151,7 +162,7 @@ widths = columns['widths']
 Customize the labels shown in resize handles:
 
 ```python
-cols = expandable_columns(
+cols = adjustable_columns(
     3, 
     labels=["📈 Analytics", "🛠️ Tools", "📱 Mobile"]
 )
@@ -162,7 +173,7 @@ cols = expandable_columns(
 Use width information for responsive behavior:
 
 ```python
-result = expandable_columns([2, 1], return_widths=True)
+result = adjustable_columns([2, 1], return_widths=True)
 main_col, side_col = result['columns']
 widths = result['widths']
 
@@ -175,22 +186,52 @@ else:  # Main column is narrow
 
 ## 🔧 Development
 
+### Prerequisites
+
+- Python 3.9+
+- Node.js 18+
+- npm or yarn
+- Git
+
 ### Setup
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/streamlit-expandable-columns
-cd streamlit-expandable-columns
+git clone https://github.com/danieljannai/streamlit-adjustable-columns
+cd streamlit-adjustable-columns
+
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install in development mode
 make install-dev
 
-# Start the frontend development server
-make frontend-dev
+# Or manually:
+pip install -e ".[dev]"
+cd streamlit_adjustable_columns/frontend
+npm install
+cd ../..
+```
 
-# In another terminal, run Streamlit
+### Development Workflow
+
+```bash
+# Terminal 1: Start frontend development server
+make frontend-dev  # Or: cd streamlit_adjustable_columns/frontend && npm start
+
+# Terminal 2: Run the demo (make sure venv is activated)
+source venv/bin/activate
 streamlit run example.py
 ```
+
+### What You'll See
+
+1. **Frontend Dev Server**: http://localhost:3001
+   - This serves the interactive column resizer component
+
+2. **Streamlit App**: http://localhost:8501
+   - Your main app with the adjustable columns
 
 ### Testing
 
@@ -207,7 +248,7 @@ make test-unit
 make test-e2e
 
 # Run with coverage
-pytest --cov=streamlit_expandable_columns
+pytest --cov=streamlit_adjustable_columns
 ```
 
 ### Code Quality
@@ -233,6 +274,23 @@ make build
 make upload
 ```
 
+## 🐛 Troubleshooting
+
+### Component shows "Loading..." forever
+- Make sure the frontend dev server is running on port 3001
+- Check that `_RELEASE = False` in `streamlit_adjustable_columns/__init__.py`
+
+### "Module not found" error
+- Make sure your virtual environment is activated: `source venv/bin/activate`
+- Reinstall dependencies: `make install-dev`
+
+### Frontend won't start
+- Make sure Node.js and npm are installed
+- Delete `node_modules` and run `npm install` again
+
+### Port conflicts
+- If port 3001 or 8501 are busy, kill other processes or change ports in the configuration
+
 ## 🧪 Test Coverage
 
 The project includes comprehensive test coverage:
@@ -250,7 +308,7 @@ Test files are organized in the `tests/` directory:
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please feel free to submit a Pull Request. This is a brief overview of how to contribute:
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -262,6 +320,8 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 8. Push to the branch (`git push origin feature/amazing-feature`)
 9. Open a Pull Request
 
+**For detailed contributing guidelines, development setup, testing procedures, and release processes, please see [CONTRIBUTING.md](CONTRIBUTING.md).**
+
 ## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -270,7 +330,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Built with [Streamlit](https://streamlit.io/)
 - Inspired by the need for flexible column layouts in Streamlit applications
-- Thanks to the Streamlit community for feedback and suggestions
+- Developed with great assistance from [Cursor](https://cursor.com/) AI coding assistant
+
+## 👨‍💻 Author
+
+**Daniel Jannai Epstein**
+
+- GitHub: [@danieljannai](https://github.com/danieljannai)
+- Created this component to enhance Streamlit's column functionality
 
 ---
 

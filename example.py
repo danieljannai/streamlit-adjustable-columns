@@ -1,12 +1,12 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from streamlit_expandable_columns import expandable_columns
+from streamlit_adjustable_columns import adjustable_columns
 
 # Set page config
-st.set_page_config(page_title="Expandable Columns Demo", layout="wide")
+st.set_page_config(page_title="Adjustable Columns Demo", layout="wide")
 
-st.title("🎯 Streamlit Expandable Columns Demo")
+st.title("🎯 Streamlit Adjustable Columns Demo")
 st.markdown("""
 This component creates columns that work exactly like `st.columns` but with **resizable boundaries** 
 between the actual column content areas! Drag the resize handles to adjust column widths dynamically.
@@ -19,7 +19,7 @@ st.subheader("📊 Example 1: Basic Resizable Columns")
 st.markdown("**Try dragging the resize handles above the columns to adjust their widths!**")
 
 st.code("""
-col1, col2, col3 = expandable_columns(3, labels=["📈 Charts", "📋 Data", "⚙️ Settings"])
+col1, col2, col3 = adjustable_columns(3, labels=["📈 Charts", "📋 Data", "⚙️ Settings"])
 
 with col1:
     st.metric("Sales", "$1,234", "12%")
@@ -32,7 +32,7 @@ col3.metric("Revenue", "$9,012", "8%")
 col3.area_chart(data)
 """)
 
-col1, col2, col3 = expandable_columns(3, labels=["📈 Charts", "📋 Data", "⚙️ Settings"], key="example1")
+col1, col2, col3 = adjustable_columns(3, labels=["📈 Charts", "📋 Data", "⚙️ Settings"], key="example1")
 
 with col1:
     st.metric("Sales", "$1,234", "12%")
@@ -51,7 +51,7 @@ st.subheader("📈 Example 2: Dashboard Layout with Custom Proportions")
 st.markdown("**The main area gets more space initially, but you can resize to your preference!**")
 
 st.code("""
-main, sidebar = expandable_columns([4, 1], labels=["🎛️ Main Dashboard", "🔧 Controls"])
+main, sidebar = adjustable_columns([4, 1], labels=["🎛️ Main Dashboard", "🔧 Controls"])
 
 with main:
     st.subheader("Analytics Overview")
@@ -62,7 +62,7 @@ with sidebar:
     # ... sidebar controls
 """)
 
-main, sidebar = expandable_columns([4, 1], labels=["🎛️ Main Dashboard", "🔧 Controls"], key="example2")
+main, sidebar = adjustable_columns([4, 1], labels=["🎛️ Main Dashboard", "🔧 Controls"], key="example2")
 
 with main:
     st.subheader("📊 Analytics Overview")
@@ -118,7 +118,7 @@ st.markdown("**Track the current column widths as you resize them:**")
 
 st.code("""
 # Get both columns and their current widths
-result = expandable_columns([2, 1, 1], labels=["Main", "Side", "Tools"], return_widths=True)
+result = adjustable_columns([2, 1, 1], labels=["Main", "Side", "Tools"], return_widths=True)
 cols = result['columns']
 widths = result['widths']
 
@@ -127,7 +127,7 @@ st.write(f"Current width ratios: {[round(w, 2) for w in widths]}")
 """)
 
 # Use return_widths to get both columns and width information
-result = expandable_columns([2, 1, 1], labels=["Main Content", "Sidebar", "Tools"], return_widths=True, key="example3")
+result = adjustable_columns([2, 1, 1], labels=["Main Content", "Sidebar", "Tools"], return_widths=True, key="example3")
 cols = result['columns']
 current_widths = result['widths']
 
@@ -153,7 +153,7 @@ st.subheader("🎨 Example 4: All Parameters with Resizable Content")
 st.markdown("**Resize the actual content containers with full `st.columns` parameter support:**")
 
 st.code("""
-cols = expandable_columns(
+cols = adjustable_columns(
     spec=[2, 1, 1], 
     gap="large", 
     vertical_alignment="center",
@@ -181,7 +181,7 @@ except:
     labels_list = ["🎯 Main Content", "📝 Notes", "🔗 Links"]
 
 # Create columns with selected parameters
-cols = expandable_columns(
+cols = adjustable_columns(
     spec=[2, 1, 1], 
     gap=gap, 
     vertical_alignment=vertical_alignment,
@@ -209,14 +209,14 @@ st.subheader("🏗️ Example 5: Content-Based Resizable Layout")
 st.markdown("**Perfect for content that needs flexible space allocation:**")
 
 st.code("""
-content, media, meta = expandable_columns(
+content, media, meta = adjustable_columns(
     [3, 2, 1], 
     labels=["📄 Article Content", "🖼️ Media Gallery", "📊 Metadata"],
     gap="medium"
 )
 """)
 
-content, media, meta = expandable_columns(
+content, media, meta = adjustable_columns(
     [3, 2, 1], 
     labels=["📄 Article Content", "🖼️ Media Gallery", "📊 Metadata"],
     gap="medium",
@@ -277,7 +277,7 @@ st.divider()
 st.header("🔢 Example 6: Many Resizable Columns")
 st.write("Testing with 5 columns - each has a 6% minimum width constraint:")
 
-result6 = expandable_columns(
+result6 = adjustable_columns(
     spec=[3, 2, 1, 2, 1], 
     labels=["📊 Charts", "🎛️ Controls", "📈 Stats", "🗂️ Data", "⚙️ Tools"],
     gap="small",
@@ -330,15 +330,15 @@ st.markdown("""
 ### 📖 **Basic Usage:**
 ```python
 # Simple resizable columns (works just like st.columns)
-cols = expandable_columns(3, labels=["Main", "Sidebar", "Tools"])
+cols = adjustable_columns(3, labels=["Main", "Sidebar", "Tools"])
 
 # Get width information for dynamic layouts
-result = expandable_columns([2, 1], labels=["Content", "Sidebar"], return_widths=True)
+result = adjustable_columns([2, 1], labels=["Content", "Sidebar"], return_widths=True)
 columns = result['columns']
 current_widths = result['widths']  # [2.0, 1.0] initially, updates as you resize
 
 # With all parameters
-cols = expandable_columns(
+cols = adjustable_columns(
     spec=[2, 1], 
     labels=["📊 Dashboard", "⚙️ Settings"],
     gap="large",

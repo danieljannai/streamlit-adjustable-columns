@@ -1,18 +1,19 @@
 import streamlit as st
-from streamlit_expandable_columns import expandable_columns
 
-st.subheader("Test Expandable Columns with Width Tracking")
+from streamlit_adjustable_columns import adjustable_columns
+
+st.subheader("Test Adjustable Columns with Width Tracking")
 
 # Columns with width tracking
-result = expandable_columns(
-    3, 
+result = adjustable_columns(
+    3,
     labels=["Col A", "Col B", "Col C"],
     return_widths=True,
-    key="widths_test"
+    key="widths_test",
 )
 
-columns = result['columns']
-widths = result['widths']
+columns = result["columns"]
+widths = result["widths"]
 
 st.info(f"Current width ratios: {[f'{w:.2f}' for w in widths]}")
 
@@ -26,4 +27,4 @@ with columns[1]:
 
 with columns[2]:
     st.write("Column C")
-    st.write(f"Width: {widths[2]:.2f}") 
+    st.write(f"Width: {widths[2]:.2f}")
