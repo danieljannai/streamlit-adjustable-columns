@@ -215,12 +215,11 @@ npm install
 cd ../..
 ```
 
-### Testing the Component
+### Development Workflow
 
 ```bash
 # Terminal 1: Start frontend development server
-cd streamlit_expandable_columns/frontend
-npm start
+make frontend-dev  # Or: cd streamlit_expandable_columns/frontend && npm start
 
 # Terminal 2: Run the demo (make sure venv is activated)
 source venv/bin/activate
@@ -284,7 +283,7 @@ make upload
 
 ### "Module not found" error
 - Make sure your virtual environment is activated: `source venv/bin/activate`
-- Reinstall dependencies: `pip install -e ".[dev]"`
+- Reinstall dependencies: `make install-dev`
 
 ### Frontend won't start
 - Make sure Node.js and npm are installed
@@ -310,7 +309,7 @@ Test files are organized in the `tests/` directory:
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please feel free to submit a Pull Request. This is a brief overview of how to contribute:
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -322,7 +321,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 8. Push to the branch (`git push origin feature/amazing-feature`)
 9. Open a Pull Request
 
-For detailed contributing guidelines, see [CONTRIBUTING.md](CONTRIBUTING.md).
+**For detailed contributing guidelines, development setup, testing procedures, and release processes, please see [CONTRIBUTING.md](CONTRIBUTING.md).**
 
 ## 📝 License
 

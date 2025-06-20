@@ -59,11 +59,10 @@ def expandable_columns(
 
     Parameters
     ----------
-    spec : int or Iterable of numbers, optional
+    spec : int or Iterable of numbers.
         Controls the number and width of columns to insert. Can be one of:
         - An integer that specifies the number of columns. All columns have equal width.
         - An Iterable of numbers (int or float) that specify the relative width of each column.
-        Default is 2 for two equal columns.
     gap : {"small", "medium", "large"}, default "small"
         The size of the gap between the columns.
     vertical_alignment : {"top", "center", "bottom"}, default "top"

@@ -25,13 +25,8 @@ Thank you for your interest in contributing to Streamlit Expandable Columns! Thi
    python3 -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    
-   # Install Python dependencies
-   pip install -e ".[dev]"
-   
-   # Install frontend dependencies
-   cd streamlit_expandable_columns/frontend
-   npm install
-   cd ../..
+   # Install dependencies
+   make install-dev
    ```
 
 3. **Start development servers:**
@@ -224,15 +219,6 @@ When suggesting features:
 
 This section outlines the steps to prepare the streamlit-expandable-columns package for release.
 
-### 🧪 Testing Infrastructure
-
-The project includes a comprehensive test suite:
-- **Unit Tests** (`tests/test_unit.py`): Test core functionality and API
-- **Integration Tests** (`tests/test_integration.py`): Test Streamlit integration
-- **E2E Tests**: Test user interactions and visual elements for all major features
-- **Test Utilities** (`tests/e2e_utils.py`): Shared testing utilities
-- **Test Apps** (`tests/streamlit_apps/`): Streamlit applications for testing
-
 ### 🔧 Development Infrastructure
 
 The project includes:
@@ -317,37 +303,6 @@ Before releasing:
 - [ ] README examples tested manually
 - [ ] Frontend built and tested (`npm run build`)
 - [ ] Package installs correctly from source
-
-### 🎯 Test Coverage
-
-The test suite covers:
-
-#### Unit Tests
-- Component initialization
-- Parameter validation
-- Session state management
-- Width calculations
-- Return value structures
-
-#### Integration Tests  
-- Streamlit integration
-- State persistence
-- Parameter forwarding
-- Error handling
-- Key uniqueness
-
-#### E2E Tests
-- Component rendering
-- Resize handle functionality
-- Label display
-- Width ratios
-- Custom parameters
-- User interactions
-
-#### Cross-Browser Support
-- Firefox testing
-- Chromium testing
-- Headless mode for CI/CD
 
 ### 🔄 Continuous Integration
 
