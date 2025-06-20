@@ -1,6 +1,6 @@
 # Makefile for streamlit-expandable-columns development
 
-.PHONY: help install install-dev test test-unit test-e2e lint format clean build upload
+.PHONY: help install install-dev test test-unit test-e2e lint format clean build upload bump-patch bump-minor bump-major
 
 help:
 	@echo "Available commands:"
@@ -14,6 +14,9 @@ help:
 	@echo "  clean        Clean build artifacts"
 	@echo "  build        Build package"
 	@echo "  upload       Upload package to PyPI"
+	@echo "  bump-patch   Bump patch version and push to git"
+	@echo "  bump-minor   Bump minor version and push to git"
+	@echo "  bump-major   Bump major version and push to git"
 
 install:
 	pip install -e .
@@ -56,6 +59,19 @@ build: clean
 
 upload: build
 	twine upload dist/*
+
+# Version management
+bump-patch:
+	bump-my-version bump patch
+	git push --follow-tags
+
+bump-minor:
+	bump-my-version bump minor
+	git push --follow-tags
+
+bump-major:
+	bump-my-version bump major
+	git push --follow-tags
 
 # Frontend development
 frontend-install:
