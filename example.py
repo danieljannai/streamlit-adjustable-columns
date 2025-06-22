@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 from streamlit_adjustable_columns import adjustable_columns
 
+np.random.seed(42)
+
 # Set page config
 st.set_page_config(page_title="Adjustable Columns Demo", layout="wide")
 
@@ -273,47 +275,135 @@ with meta:
 
 st.divider()
 
-# Example 6: Many columns - testing minimum width constraints
-st.header("🔢 Example 6: Many Resizable Columns")
+# Example 6: Hide columns by double-clicking header
+st.subheader("🙈 Example 6: Hide Columns by Double-Clicking Header")
+st.markdown("**Double-click a column header to hide/show that column.** The hidden state is tracked and you can use it in your app logic.")
+
+st.code('''
+result = adjustable_columns([1, 1, 1], labels=["A", "B", "C"], return_widths=True, key="example6")
+cols = result['columns']
+hidden = result['hidden']
+
+for i, col in enumerate(cols):
+    with col:
+        st.write(f"Column {i+1} ({chr(65+i)})")
+        st.write(f"Hidden: {hidden[i]}")
+        if not hidden[i]:
+            st.success(f"This column is visible!")
+        else:
+            st.warning(f"This column is hidden!")
+
+st.info(f"**Hidden state:** {hidden}")
+''')
+
+result = adjustable_columns([1, 1, 1], labels=["A", "B", "C"], return_widths=True, key="example6")
+cols = result['columns']
+hidden = result['hidden']
+
+for i, col in enumerate(cols):
+    with col:
+        st.write(f"Column {i+1} ({chr(65+i)})")
+        st.write(f"Hidden: {hidden[i]}")
+        if not hidden[i]:
+            st.success(f"This column is visible!")
+        else:
+            st.warning(f"This column is hidden!")
+
+st.info(f"**Hidden state:** {hidden}")
+
+st.divider()
+
+# Example 7: Initial hidden columns
+st.subheader("🚀 Example 7: Initial Hidden Columns")
+st.markdown("**Specify which columns should start hidden using the `initial_hidden` parameter.**")
+
+st.code('''
+# Second column starts hidden
+result = adjustable_columns(
+    [1, 1, 1], 
+    labels=["Main", "Side", "Tools"], 
+    initial_hidden=[False, True, False],  # Second column starts hidden
+    return_widths=True, 
+    key="example7"
+)
+cols = result['columns']
+hidden = result['hidden']
+
+for i, col in enumerate(cols):
+    with col:
+        st.write(f"Column {i+1}")
+        if not hidden[i]:
+            st.success("This column is visible!")
+        else:
+            st.warning("This column is hidden!")
+
+st.info(f"**Hidden state:** {hidden}")
+''')
+
+# Second column starts hidden
+result = adjustable_columns(
+    [1, 1, 1], 
+    labels=["Main", "Side", "Tools"], 
+    initial_hidden=[False, True, False],  # Second column starts hidden
+    return_widths=True, 
+    key="example7"
+)
+cols = result['columns']
+hidden = result['hidden']
+
+for i, col in enumerate(cols):
+    with col:
+        st.write(f"Column {i+1}")
+        if not hidden[i]:
+            st.success("This column is visible!")
+        else:
+            st.warning("This column is hidden!")
+
+st.info(f"**Hidden state:** {hidden}")
+
+st.divider()
+
+# Example 8: Many columns - testing minimum width constraints
+st.header("🔢 Example 8: Many Resizable Columns")
 st.write("Testing with 5 columns - each has a 6% minimum width constraint:")
 
-result6 = adjustable_columns(
+result = adjustable_columns(
     spec=[3, 2, 1, 2, 1], 
     labels=["📊 Charts", "🎛️ Controls", "📈 Stats", "🗂️ Data", "⚙️ Tools"],
     gap="small",
     return_widths=True,
-    key="example6"
+    key="example8"
 )
 
-cols6 = result6['columns']
-widths6 = result6['widths']
+cols = result['columns']
+widths = result['widths']
 
-with cols6[0]:
+with cols[0]:
     st.write("**Main Chart Area**")
     st.info("📊 Primary visualizations")
     st.line_chart(np.random.randn(10, 1).cumsum())
     
-with cols6[1]:
+with cols[1]:
     st.write("**Control Panel**")
     st.selectbox("Chart Type", ["Line", "Bar", "Scatter"], key="chart_type_6")
     st.slider("Smoothing", 0.1, 1.0, 0.5, key="smoothing_6")
     
-with cols6[2]:
+with cols[2]:
     st.write("**Key Metrics**")
     st.metric("Users", "1,234", "+12%")
     st.metric("Sales", "$45K", "+8%")
     
-with cols6[3]:
+with cols[3]:
     st.write("**Data Explorer**")
     st.write("🗂️ Browse datasets")
     st.selectbox("Dataset", ["Sales", "Users", "Products"], key="dataset_6")
     
-with cols6[4]:
+with cols[4]:
     st.write("**Settings**")
     st.checkbox("Auto-refresh", key="auto_refresh_6")
     st.checkbox("Dark mode", key="dark_mode_6")
 
-st.info(f"**5-column layout widths:** {[f'{w:.2f}' for w in widths6]} - Try compressing columns to test 6% minimum!")
+st.info(f"**5-column layout widths:** {[f'{w:.2f}' for w in widths]} - Try compressing columns to test 6% minimum!")
 
 st.divider()
 

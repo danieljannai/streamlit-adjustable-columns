@@ -11,6 +11,7 @@ function onRender(event) {
     const labels = config.labels || widths.map((_, i) => `Col ${i+1}`)
     const gap = config.gap || "small"
     const border = config.border || false
+    const hidden = config.hidden || widths.map(() => false)
     
     // Minimum width constraint: 6% for all columns
     const MIN_WIDTH_RATIO = 0.06
@@ -21,6 +22,7 @@ function onRender(event) {
     
     // Store current state
     let currentWidths = [...widths]
+    let currentHidden = [...hidden]
     let isResizing = false
     let startX = 0
     let startWidths = []
@@ -92,7 +94,7 @@ function onRender(event) {
                 left: ${pos.start}px;
                 width: ${pos.width}px;
                 height: 100%;
-                background: ${border ? 'rgba(230, 234, 241, 0.1)' : 'rgba(100, 100, 100, 0.05)'};
+                background: ${currentHidden[index] ? 'rgba(255, 107, 107, 0.1)' : (border ? 'rgba(230, 234, 241, 0.1)' : 'rgba(100, 100, 100, 0.05)')};
                 ${border ? 'border: 1px dashed rgba(230, 234, 241, 0.3);' : ''}
                 border-radius: 4px;
                 display: flex;
@@ -100,6 +102,8 @@ function onRender(event) {
                 justify-content: center;
                 transition: background 0.15s ease;
                 box-sizing: border-box;
+                cursor: pointer;
+                user-select: none;
             `
             
             // Add label
@@ -107,9 +111,9 @@ function onRender(event) {
             label.textContent = labels[index]
             label.style.cssText = `
                 font-size: 11px;
-                color: ${theme.text}60;
+                color: ${currentHidden[index] ? theme.primary : theme.text + '60'};
                 font-weight: 500;
-                opacity: 0.7;
+                opacity: ${currentHidden[index] ? '0.8' : '0.7'};
                 pointer-events: none;
                 white-space: nowrap;
                 overflow: hidden;
@@ -119,18 +123,63 @@ function onRender(event) {
             
             indicator.appendChild(label)
             
+            // Add hidden indicator
+            if (currentHidden[index]) {
+                const hiddenIcon = document.createElement("div")
+                hiddenIcon.innerHTML = "👁️"
+                hiddenIcon.style.cssText = `
+                    position: absolute;
+                    top: 2px;
+                    right: 4px;
+                    font-size: 10px;
+                    opacity: 0.7;
+                    pointer-events: none;
+                `
+                indicator.appendChild(hiddenIcon)
+            }
+            
             // Hover effect
             indicator.addEventListener('mouseenter', () => {
                 if (!isResizing) {
-                    indicator.style.background = border ? 'rgba(230, 234, 241, 0.2)' : 'rgba(100, 100, 100, 0.1)'
+                    indicator.style.background = currentHidden[index] ? 
+                        'rgba(255, 107, 107, 0.2)' : 
+                        (border ? 'rgba(230, 234, 241, 0.2)' : 'rgba(100, 100, 100, 0.1)')
                     label.style.opacity = '1'
                 }
             })
             
             indicator.addEventListener('mouseleave', () => {
                 if (!isResizing) {
-                    indicator.style.background = border ? 'rgba(230, 234, 241, 0.1)' : 'rgba(100, 100, 100, 0.05)'
-                    label.style.opacity = '0.7'
+                    indicator.style.background = currentHidden[index] ? 
+                        'rgba(255, 107, 107, 0.1)' : 
+                        (border ? 'rgba(230, 234, 241, 0.1)' : 'rgba(100, 100, 100, 0.05)')
+                    label.style.opacity = currentHidden[index] ? '0.8' : '0.7'
+                }
+            })
+            
+            // Double-click to hide/show column
+            let clickCount = 0
+            let clickTimer = null
+            
+            indicator.addEventListener('click', () => {
+                clickCount++
+                if (clickCount === 1) {
+                    clickTimer = setTimeout(() => {
+                        clickCount = 0
+                    }, 300)
+                } else if (clickCount === 2) {
+                    clearTimeout(clickTimer)
+                    clickCount = 0
+                    
+                    // Toggle hidden state
+                    currentHidden[index] = !currentHidden[index]
+                    
+                    // Send updated hidden state to Streamlit
+                    Streamlit.setComponentValue({
+                        widths: currentWidths,
+                        hidden: currentHidden,
+                        action: "toggle_hidden"
+                    })
                 }
             })
             
@@ -284,15 +333,18 @@ function onRender(event) {
         
         // Reset indicators
         const indicators = handleContainer.querySelectorAll('.column-indicator')
-        indicators.forEach(indicator => {
-            indicator.style.background = border ? 'rgba(230, 234, 241, 0.1)' : 'rgba(100, 100, 100, 0.05)'
+        indicators.forEach((indicator, index) => {
+            indicator.style.background = currentHidden[index] ? 
+                'rgba(255, 107, 107, 0.1)' : 
+                (border ? 'rgba(230, 234, 241, 0.1)' : 'rgba(100, 100, 100, 0.05)')
             const label = indicator.querySelector('div')
-            if (label) label.style.opacity = '0.7'
+            if (label) label.style.opacity = currentHidden[index] ? '0.8' : '0.7'
         })
         
         // Send updated widths back to Streamlit
         Streamlit.setComponentValue({
             widths: currentWidths,
+            hidden: currentHidden,
             action: "resize"
         })
     }

@@ -55,7 +55,7 @@ You know it's working when you see:
 
 ## 📖 API Reference
 
-### `adjustable_columns(spec, *, gap="small", vertical_alignment="top", border=False, labels=None, return_widths=False, key=None)`
+### `adjustable_columns(spec, *, gap="small", vertical_alignment="top", border=False, labels=None, return_widths=False, initial_hidden=None, key=None)`
 
 Creates resizable columns with draggable boundaries.
 
@@ -69,19 +69,21 @@ Creates resizable columns with draggable boundaries.
 - **`border`** (bool): Show borders around columns
 - **`labels`** (list): Custom labels shown in resize handles
 - **`return_widths`** (bool): Return width information along with columns
+- **`initial_hidden`** (list of bool, optional): List of booleans indicating which columns should start hidden. Must match the number of columns. Example: `[False, True, False]` will start the second column hidden.
 - **`key`** (str): Unique component key (recommended for multiple instances)
 
 #### Returns
 
 - **Default**: List of column containers (same as `st.columns`)
-- **With `return_widths=True`**: Dict with `{'columns': [...], 'widths': [...]}`
+- **With `return_widths=True`**: Dict with `{'columns': [...], 'widths': [...], 'hidden': [...]}`
 
-## 🎮 How to Resize
+## 🎮 How to Resize & Hide Columns
 
 1. **Look for resize handles** above each set of adjustable columns
 2. **Hover over the boundaries** between column areas - you'll see resize cursors
 3. **Click and drag** the handles to adjust column widths
-4. **Release** to apply changes - they persist across app reruns!
+4. **Double-click a column header** to hide/show that column
+5. **Release** to apply changes - they persist across app reruns!
 
 ## 📚 Examples
 
@@ -153,6 +155,25 @@ columns = adjustable_columns(
 
 cols = columns['columns']
 widths = columns['widths']
+```
+
+### Start with Some Columns Hidden
+
+```python
+# Start with the second column hidden
+cols = adjustable_columns(
+    [1, 1, 1],
+    labels=["Main", "Side", "Tools"],
+    initial_hidden=[False, True, False],
+    key="hidden_example"
+)
+
+with cols[0]:
+    st.write("Main column is visible!")
+with cols[1]:
+    st.write("Side column starts hidden!")
+with cols[2]:
+    st.write("Tools column is visible!")
 ```
 
 ## 🎨 Customization
