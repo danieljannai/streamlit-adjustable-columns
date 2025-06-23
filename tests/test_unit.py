@@ -10,7 +10,6 @@ from streamlit_adjustable_columns import HidableContainer, adjustable_columns
 @pytest.mark.unit
 def test_adjustable_columns_basic():
     """Test basic adjustable_columns functionality."""
-    import streamlit as st
 
     # Mock the component function
     def mock_component(*args, **kwargs):
@@ -45,8 +44,6 @@ def test_adjustable_columns_basic():
 @pytest.mark.unit
 def test_adjustable_columns_config():
     """Test that the component receives the correct configuration."""
-    import streamlit as st
-
     config_received = None
 
     def mock_component(config=None, **kwargs):
@@ -76,8 +73,7 @@ def test_adjustable_columns_config():
 def test_adjustable_columns_hidden(monkeypatch):
     import streamlit as st
 
-    from streamlit_adjustable_columns import (HidableContainer,
-                                              adjustable_columns)
+    from streamlit_adjustable_columns import HidableContainer, adjustable_columns
 
     # Patch session_state to simulate Streamlit
     state = {}
@@ -107,8 +103,7 @@ def test_adjustable_columns_initial_hidden(monkeypatch):
     """Test initial_hidden parameter functionality."""
     import streamlit as st
 
-    from streamlit_adjustable_columns import (HidableContainer,
-                                              adjustable_columns)
+    from streamlit_adjustable_columns import adjustable_columns
 
     # Patch session_state to simulate Streamlit
     state = {}
@@ -139,8 +134,6 @@ def test_adjustable_columns_initial_hidden(monkeypatch):
 @pytest.mark.unit
 def test_adjustable_columns_initial_hidden_validation():
     """Test validation of initial_hidden parameter."""
-    import streamlit as st
-
     # Test wrong length
     with pytest.raises(ValueError, match="initial_hidden must have the same length"):
         adjustable_columns([1, 1], initial_hidden=[True])
@@ -155,8 +148,6 @@ def test_adjustable_columns_initial_hidden_validation():
 @pytest.mark.unit
 def test_hidable_container_api():
     """Test that HidableContainer maintains the same API as the wrapped container."""
-    import streamlit as st
-
     from streamlit_adjustable_columns import HidableContainer
 
     # Create a mock container with common Streamlit methods
