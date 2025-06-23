@@ -11,6 +11,7 @@ function onRender(event) {
     const labels = config.labels || widths.map((_, i) => `Col ${i+1}`)
     const gap = config.gap || "small"
     const border = config.border || false
+    const hidden = config.hidden || widths.map(() => false)
     
     // Minimum width constraint: 6% for all columns
     const MIN_WIDTH_RATIO = 0.06
@@ -21,6 +22,7 @@ function onRender(event) {
     
     // Store current state
     let currentWidths = [...widths]
+    let currentHidden = [...hidden]
     let isResizing = false
     let startX = 0
     let startWidths = []
@@ -83,6 +85,29 @@ function onRender(event) {
         const containerWidth = handleContainer.offsetWidth || 800 // fallback
         const positions = calculateColumnPositions(containerWidth)
         
+        // Create a single, shared tooltip that is not constrained by column width
+        const tooltip = document.createElement("div")
+        tooltip.textContent = "Double-click to hide/show column"
+        tooltip.style.cssText = `
+            position: absolute;
+            top: -2px; /* Position it in the margin space above the indicators */
+            left: 0; /* Will be updated on hover */
+            transform: translateX(-50%);
+            background: ${theme.text};
+            color: ${theme.background};
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.1s ease;
+            z-index: 9999;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            font-weight: 500;
+        `
+        handleContainer.appendChild(tooltip)
+        
         positions.forEach((pos, index) => {
             // Create column indicator
             const indicator = document.createElement("div")
@@ -92,7 +117,7 @@ function onRender(event) {
                 left: ${pos.start}px;
                 width: ${pos.width}px;
                 height: 100%;
-                background: ${border ? 'rgba(230, 234, 241, 0.1)' : 'rgba(100, 100, 100, 0.05)'};
+                background: ${currentHidden[index] ? 'rgba(255, 107, 107, 0.1)' : (border ? 'rgba(230, 234, 241, 0.1)' : 'rgba(100, 100, 100, 0.05)')};
                 ${border ? 'border: 1px dashed rgba(230, 234, 241, 0.3);' : ''}
                 border-radius: 4px;
                 display: flex;
@@ -100,6 +125,8 @@ function onRender(event) {
                 justify-content: center;
                 transition: background 0.15s ease;
                 box-sizing: border-box;
+                cursor: pointer;
+                user-select: none;
             `
             
             // Add label
@@ -107,9 +134,9 @@ function onRender(event) {
             label.textContent = labels[index]
             label.style.cssText = `
                 font-size: 11px;
-                color: ${theme.text}60;
+                color: ${currentHidden[index] ? theme.primary : theme.text + '60'};
                 font-weight: 500;
-                opacity: 0.7;
+                opacity: ${currentHidden[index] ? '0.8' : '0.7'};
                 pointer-events: none;
                 white-space: nowrap;
                 overflow: hidden;
@@ -119,18 +146,81 @@ function onRender(event) {
             
             indicator.appendChild(label)
             
-            // Hover effect
+            // Add hidden indicator
+            if (currentHidden[index]) {
+                const hiddenIcon = document.createElement("div")
+                hiddenIcon.innerHTML = "👁️"
+                hiddenIcon.style.cssText = `
+                    position: absolute;
+                    top: 2px;
+                    right: 4px;
+                    font-size: 10px;
+                    opacity: 0.7;
+                    pointer-events: none;
+                `
+                indicator.appendChild(hiddenIcon)
+            }
+            
+            // Show tooltip on hover
             indicator.addEventListener('mouseenter', () => {
                 if (!isResizing) {
-                    indicator.style.background = border ? 'rgba(230, 234, 241, 0.2)' : 'rgba(100, 100, 100, 0.1)'
+                    indicator.style.background = currentHidden[index] ? 
+                        'rgba(255, 107, 107, 0.2)' : 
+                        (border ? 'rgba(230, 234, 241, 0.2)' : 'rgba(100, 100, 100, 0.1)')
                     label.style.opacity = '1'
+                    
+                    // Position and show the shared tooltip, ensuring it's not clipped
+                    const containerWidth = handleContainer.offsetWidth;
+                    const tooltipWidth = tooltip.offsetWidth;
+                    let targetLeft = pos.start + pos.width / 2;
+
+                    // Adjust position to prevent clipping at the component edges
+                    if (targetLeft - tooltipWidth / 2 < 0) {
+                        // Nudge right if clipped on the left
+                        targetLeft = tooltipWidth / 2;
+                    } else if (targetLeft + tooltipWidth / 2 > containerWidth) {
+                        // Nudge left if clipped on the right
+                        targetLeft = containerWidth - tooltipWidth / 2;
+                    }
+                    
+                    tooltip.style.left = `${targetLeft}px`;
+                    tooltip.style.opacity = '1'
                 }
             })
             
             indicator.addEventListener('mouseleave', () => {
                 if (!isResizing) {
-                    indicator.style.background = border ? 'rgba(230, 234, 241, 0.1)' : 'rgba(100, 100, 100, 0.05)'
-                    label.style.opacity = '0.7'
+                    indicator.style.background = currentHidden[index] ? 
+                        'rgba(255, 107, 107, 0.1)' : 
+                        (border ? 'rgba(230, 234, 241, 0.1)' : 'rgba(100, 100, 100, 0.05)')
+                    label.style.opacity = currentHidden[index] ? '0.8' : '0.7'
+                    tooltip.style.opacity = '0'
+                }
+            })
+            
+            // Double-click to hide/show column
+            let clickCount = 0
+            let clickTimer = null
+            
+            indicator.addEventListener('click', () => {
+                clickCount++
+                if (clickCount === 1) {
+                    clickTimer = setTimeout(() => {
+                        clickCount = 0
+                    }, 300)
+                } else if (clickCount === 2) {
+                    clearTimeout(clickTimer)
+                    clickCount = 0
+                    
+                    // Toggle hidden state
+                    currentHidden[index] = !currentHidden[index]
+                    
+                    // Send updated hidden state to Streamlit
+                    Streamlit.setComponentValue({
+                        widths: currentWidths,
+                        hidden: currentHidden,
+                        action: "toggle_hidden"
+                    })
                 }
             })
             
@@ -284,15 +374,18 @@ function onRender(event) {
         
         // Reset indicators
         const indicators = handleContainer.querySelectorAll('.column-indicator')
-        indicators.forEach(indicator => {
-            indicator.style.background = border ? 'rgba(230, 234, 241, 0.1)' : 'rgba(100, 100, 100, 0.05)'
+        indicators.forEach((indicator, index) => {
+            indicator.style.background = currentHidden[index] ? 
+                'rgba(255, 107, 107, 0.1)' : 
+                (border ? 'rgba(230, 234, 241, 0.1)' : 'rgba(100, 100, 100, 0.05)')
             const label = indicator.querySelector('div')
-            if (label) label.style.opacity = '0.7'
+            if (label) label.style.opacity = currentHidden[index] ? '0.8' : '0.7'
         })
         
         // Send updated widths back to Streamlit
         Streamlit.setComponentValue({
             widths: currentWidths,
+            hidden: currentHidden,
             action: "resize"
         })
     }

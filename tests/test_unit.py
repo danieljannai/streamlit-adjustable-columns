@@ -3,8 +3,186 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
+import streamlit as st
 
-from streamlit_adjustable_columns import adjustable_columns
+from streamlit_adjustable_columns import HidableContainer, adjustable_columns
+
+
+@pytest.mark.unit
+def test_adjustable_columns_basic():
+    """Test basic adjustable_columns functionality."""
+
+    # Mock the component function
+    def mock_component(*args, **kwargs):
+        return {"widths": [1, 1]}
+
+    # Patch the component function
+    import streamlit_adjustable_columns
+
+    original_component = streamlit_adjustable_columns._component_func
+    streamlit_adjustable_columns._component_func = mock_component
+
+    try:
+        # Test basic usage
+        cols = adjustable_columns(2)
+        assert len(cols) == 2
+        assert all(isinstance(col, HidableContainer) for col in cols)
+
+        # Test with return_widths
+        result = adjustable_columns(2, return_widths=True)
+        assert "columns" in result
+        assert "widths" in result
+        assert "hidden" in result
+        assert len(result["columns"]) == 2
+        assert len(result["widths"]) == 2
+        assert len(result["hidden"]) == 2
+
+    finally:
+        # Restore original component function
+        streamlit_adjustable_columns._component_func = original_component
+
+
+@pytest.mark.unit
+def test_adjustable_columns_config():
+    """Test that the component receives the correct configuration."""
+    config_received = None
+
+    def mock_component(config=None, **kwargs):
+        nonlocal config_received
+        config_received = config
+        return {"widths": [1, 1, 1]}
+
+    # Patch the component function
+    import streamlit_adjustable_columns
+
+    original_component = streamlit_adjustable_columns._component_func
+    streamlit_adjustable_columns._component_func = mock_component
+
+    try:
+        adjustable_columns([1, 1, 1], labels=["A", "B", "C"])
+        assert config_received is not None
+        assert "widths" in config_received
+        assert "labels" in config_received
+        assert config_received["labels"] == ["A", "B", "C"]
+
+    finally:
+        # Restore original component function
+        streamlit_adjustable_columns._component_func = original_component
+
+
+@pytest.mark.unit
+def test_adjustable_columns_hidden(monkeypatch):
+
+    # Patch session_state to simulate Streamlit
+    state = {}
+    monkeypatch.setattr(st, "session_state", state)
+
+    # Simulate initial call
+    result = adjustable_columns(
+        [1, 1, 1], labels=["A", "B", "C"], return_widths=True, key="test_hidden"
+    )
+    assert "hidden" in result
+    assert result["hidden"] == [False, False, False]
+    assert all(isinstance(c, HidableContainer) for c in result["columns"])
+
+    # Simulate hiding the second column
+    state["adjustable_columns_hidden_test_hidden"] = [False, True, False]
+    result2 = adjustable_columns(
+        [1, 1, 1], labels=["A", "B", "C"], return_widths=True, key="test_hidden"
+    )
+    assert result2["hidden"] == [False, True, False]
+    assert result2["columns"][1].is_hidden
+    assert not result2["columns"][0].is_hidden
+    assert not result2["columns"][2].is_hidden
+
+
+@pytest.mark.unit
+def test_adjustable_columns_initial_hidden(monkeypatch):
+    """Test initial_hidden parameter functionality."""
+
+    # Patch session_state to simulate Streamlit
+    state = {}
+    monkeypatch.setattr(st, "session_state", state)
+
+    # Test with initial_hidden parameter
+    result = adjustable_columns(
+        [1, 1, 1],
+        labels=["A", "B", "C"],
+        initial_hidden=[False, True, False],
+        return_widths=True,
+        key="test_initial_hidden",
+    )
+
+    assert result["hidden"] == [False, True, False]
+    assert not result["columns"][0].is_hidden
+    assert result["columns"][1].is_hidden
+    assert not result["columns"][2].is_hidden
+
+    # Test that session state was initialized correctly
+    assert state["adjustable_columns_hidden_test_initial_hidden"] == [
+        False,
+        True,
+        False,
+    ]
+
+
+@pytest.mark.unit
+def test_adjustable_columns_initial_hidden_validation():
+    """Test validation of initial_hidden parameter."""
+    # Test wrong length
+    with pytest.raises(ValueError, match="initial_hidden must have the same length"):
+        adjustable_columns([1, 1], initial_hidden=[True])
+
+    # Test non-boolean values
+    with pytest.raises(
+        ValueError, match="initial_hidden must contain only boolean values"
+    ):
+        adjustable_columns([1, 1], initial_hidden=[True, "False"])
+
+
+@pytest.mark.unit
+def test_hidable_container_api():
+    """Test that HidableContainer maintains the same API as the wrapped container."""
+
+    # Create a mock container with common Streamlit methods
+    class MockContainer:
+        def write(self, text):
+            return f"write: {text}"
+
+        def metric(self, label, value):
+            return f"metric: {label} = {value}"
+
+        def button(self, text):
+            return f"button: {text}"
+
+        def empty(self):
+            return self
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+    mock_container = MockContainer()
+    hidable = HidableContainer(mock_container, is_hidden=False)
+
+    # Test that methods work when visible
+    assert hasattr(hidable, "write")
+    assert hasattr(hidable, "metric")
+    assert hasattr(hidable, "button")
+    assert callable(hidable.write)
+    assert callable(hidable.metric)
+    assert callable(hidable.button)
+
+    # Test that methods work when hidden (should not raise AttributeError)
+    hidable.is_hidden = True
+    assert hasattr(hidable, "write")
+    assert hasattr(hidable, "metric")
+    assert hasattr(hidable, "button")
+    assert callable(hidable.write)
+    assert callable(hidable.metric)
+    assert callable(hidable.button)
 
 
 @pytest.mark.unit
@@ -22,9 +200,13 @@ def test_adjustable_columns_basic_usage():
         # Call the function
         result = adjustable_columns(3)
 
-        # Check that it returns the columns
+        # Check that it returns the columns (now wrapped in HidableContainer)
         assert len(result) == 3
-        assert result == [mock_col1, mock_col2, mock_col3]
+        assert all(isinstance(col, HidableContainer) for col in result)
+        # Check that the containers wrap the original mock columns
+        assert result[0].container == mock_col1
+        assert result[1].container == mock_col2
+        assert result[2].container == mock_col3
 
 
 @pytest.mark.unit
@@ -37,7 +219,10 @@ def test_adjustable_columns_with_ratios():
         result = adjustable_columns([3, 1])
 
         assert len(result) == 2
-        assert result == [mock_col1, mock_col2]
+        assert all(isinstance(col, HidableContainer) for col in result)
+        # Check that the containers wrap the original mock columns
+        assert result[0].container == mock_col1
+        assert result[1].container == mock_col2
 
 
 @pytest.mark.unit
