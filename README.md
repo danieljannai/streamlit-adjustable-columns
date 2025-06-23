@@ -2,7 +2,7 @@
 
 [![PyPI version](https://badge.fury.io/py/streamlit-adjustable-columns.svg)](https://badge.fury.io/py/streamlit-adjustable-columns)
 
-**Version:** 0.2.0
+**Version:** 0.3.0
 
 Create resizable columns in Streamlit! This component provides `st.columns` functionality with **draggable resize handles** that allow users to adjust column widths dynamically.
 
