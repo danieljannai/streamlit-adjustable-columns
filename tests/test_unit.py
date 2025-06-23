@@ -3,6 +3,7 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
+import streamlit as st
 
 from streamlit_adjustable_columns import HidableContainer, adjustable_columns
 
@@ -71,9 +72,6 @@ def test_adjustable_columns_config():
 
 @pytest.mark.unit
 def test_adjustable_columns_hidden(monkeypatch):
-    import streamlit as st
-
-    from streamlit_adjustable_columns import HidableContainer, adjustable_columns
 
     # Patch session_state to simulate Streamlit
     state = {}
@@ -101,9 +99,6 @@ def test_adjustable_columns_hidden(monkeypatch):
 @pytest.mark.unit
 def test_adjustable_columns_initial_hidden(monkeypatch):
     """Test initial_hidden parameter functionality."""
-    import streamlit as st
-
-    from streamlit_adjustable_columns import adjustable_columns
 
     # Patch session_state to simulate Streamlit
     state = {}
@@ -148,7 +143,6 @@ def test_adjustable_columns_initial_hidden_validation():
 @pytest.mark.unit
 def test_hidable_container_api():
     """Test that HidableContainer maintains the same API as the wrapped container."""
-    from streamlit_adjustable_columns import HidableContainer
 
     # Create a mock container with common Streamlit methods
     class MockContainer:
