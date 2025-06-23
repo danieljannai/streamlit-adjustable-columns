@@ -85,6 +85,29 @@ function onRender(event) {
         const containerWidth = handleContainer.offsetWidth || 800 // fallback
         const positions = calculateColumnPositions(containerWidth)
         
+        // Create a single, shared tooltip that is not constrained by column width
+        const tooltip = document.createElement("div")
+        tooltip.textContent = "Double-click to hide/show column"
+        tooltip.style.cssText = `
+            position: absolute;
+            top: -2px; /* Position it in the margin space above the indicators */
+            left: 0; /* Will be updated on hover */
+            transform: translateX(-50%);
+            background: ${theme.text};
+            color: ${theme.background};
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.1s ease;
+            z-index: 9999;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            font-weight: 500;
+        `
+        handleContainer.appendChild(tooltip)
+        
         positions.forEach((pos, index) => {
             // Create column indicator
             const indicator = document.createElement("div")
@@ -138,13 +161,30 @@ function onRender(event) {
                 indicator.appendChild(hiddenIcon)
             }
             
-            // Hover effect
+            // Show tooltip on hover
             indicator.addEventListener('mouseenter', () => {
                 if (!isResizing) {
                     indicator.style.background = currentHidden[index] ? 
                         'rgba(255, 107, 107, 0.2)' : 
                         (border ? 'rgba(230, 234, 241, 0.2)' : 'rgba(100, 100, 100, 0.1)')
                     label.style.opacity = '1'
+                    
+                    // Position and show the shared tooltip, ensuring it's not clipped
+                    const containerWidth = handleContainer.offsetWidth;
+                    const tooltipWidth = tooltip.offsetWidth;
+                    let targetLeft = pos.start + pos.width / 2;
+
+                    // Adjust position to prevent clipping at the component edges
+                    if (targetLeft - tooltipWidth / 2 < 0) {
+                        // Nudge right if clipped on the left
+                        targetLeft = tooltipWidth / 2;
+                    } else if (targetLeft + tooltipWidth / 2 > containerWidth) {
+                        // Nudge left if clipped on the right
+                        targetLeft = containerWidth - tooltipWidth / 2;
+                    }
+                    
+                    tooltip.style.left = `${targetLeft}px`;
+                    tooltip.style.opacity = '1'
                 }
             })
             
@@ -154,6 +194,7 @@ function onRender(event) {
                         'rgba(255, 107, 107, 0.1)' : 
                         (border ? 'rgba(230, 234, 241, 0.1)' : 'rgba(100, 100, 100, 0.05)')
                     label.style.opacity = currentHidden[index] ? '0.8' : '0.7'
+                    tooltip.style.opacity = '0'
                 }
             })
             
