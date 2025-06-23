@@ -6,7 +6,7 @@
 
 Create resizable columns in Streamlit! This component provides `st.columns` functionality with **draggable resize handles** that allow users to adjust column widths dynamically.
 
-![Adjustable Columns Demo](adjustable-columns-demo.gif)
+![Adjustable Columns Demo](https://github.com/danieljannai/streamlit-adjustable-columns/raw/main/adjustable-columns-demo.gif)
 
 ## ✨ Features
 
@@ -18,6 +18,7 @@ Create resizable columns in Streamlit! This component provides `st.columns` func
 - **⚙️ Full Compatibility**: Supports all `st.columns` parameters (gap, alignment, border)
 - **🔒 Minimum Width**: 6% minimum width constraint prevents unusably narrow columns
 - **📊 Width Tracking**: Optional `return_widths` parameter for dynamic layouts
+- **👁️ Hide/Show Columns**: Double-click column headers to hide/show columns dynamically
 
 ## 🚀 Quick Start
 
