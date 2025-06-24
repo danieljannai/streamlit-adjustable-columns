@@ -1,16 +1,13 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 import os
 import subprocess
 import sys
 
-# Read the README file
-this_directory = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(this_directory, "README.md"), encoding="utf-8") as f:
-    long_description = f.read()
 
 def build_frontend():
     """Build the frontend assets during installation."""
 
+    this_directory = os.path.abspath(os.path.dirname(__file__))
     frontend_dir = os.path.join(this_directory, "streamlit_adjustable_columns", "frontend")
     build_dir = os.path.join(frontend_dir, "build")
 
@@ -47,34 +44,5 @@ def build_frontend():
 if any(arg in sys.argv for arg in ["install", "develop", "bdist_wheel", "sdist", "bdist"]):
     build_frontend()
 
-setup(
-    name="streamlit-adjustable-columns",
-    version="0.2.1",
-    author="Daniel Jannai Epstein",
-    description="A Streamlit custom component for creating columns with adjustable widths",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
-    url="https://github.com/danieljannai/streamlit-adjustable-columns",
-    packages=find_packages(),
-    include_package_data=True,
-    classifiers=[
-        "Development Status :: 3 - Alpha",
-        "Intended Audience :: Developers",
-        "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11",
-        # "Framework :: Streamlit",
-    ],
-    python_requires=">=3.9",
-    install_requires=[
-        "streamlit>=1.0.0",
-    ],
-    extras_require={
-        "dev": [
-            "pytest>=7.0.0",
-            "playwright>=1.30.0",
-            "requests>=2.25.0",
-        ]
-    },
-) 
+# Minimal setup - all metadata is now in pyproject.toml
+setup() 

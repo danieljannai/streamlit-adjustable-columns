@@ -42,12 +42,10 @@ class TestAdjustableColumnsIntegration:
                 # Mock component returning custom widths
                 mock_component.return_value = {"widths": [1.5, 0.5]}
 
-                with patch(
-                    "streamlit_adjustable_columns.st.columns"
-                ) as mock_columns, patch(
-                    "streamlit_adjustable_columns.st.markdown"
-                ), patch(
-                    "streamlit_adjustable_columns.st.rerun"
+                with (
+                    patch("streamlit_adjustable_columns.st.columns") as mock_columns,
+                    patch("streamlit_adjustable_columns.st.markdown"),
+                    patch("streamlit_adjustable_columns.st.rerun"),
                 ):
 
                     mock_columns.return_value = [MagicMock(), MagicMock()]
@@ -96,12 +94,10 @@ class TestAdjustableColumnsIntegration:
         with patch("streamlit_adjustable_columns._component_func") as mock_component:
             mock_component.return_value = {"widths": [1.0, 1.0]}
 
-            with patch(
-                "streamlit_adjustable_columns.st.columns"
-            ) as mock_columns, patch(
-                "streamlit_adjustable_columns.st.session_state", {}
-            ), patch(
-                "streamlit_adjustable_columns.st.markdown"
+            with (
+                patch("streamlit_adjustable_columns.st.columns") as mock_columns,
+                patch("streamlit_adjustable_columns.st.session_state", {}),
+                patch("streamlit_adjustable_columns.st.markdown"),
             ):
 
                 mock_columns.return_value = [MagicMock(), MagicMock()]
@@ -142,9 +138,11 @@ class TestAdjustableColumnsIntegration:
         custom_widths = [2.0, 1.0, 1.0]
         mock_component.return_value = {"widths": custom_widths}
 
-        with patch("streamlit_adjustable_columns.st.session_state", {}), patch(
-            "streamlit_adjustable_columns.st.markdown"
-        ), patch("streamlit_adjustable_columns.st.rerun"):
+        with (
+            patch("streamlit_adjustable_columns.st.session_state", {}),
+            patch("streamlit_adjustable_columns.st.markdown"),
+            patch("streamlit_adjustable_columns.st.rerun"),
+        ):
 
             mock_columns.return_value = [
                 MagicMock(),

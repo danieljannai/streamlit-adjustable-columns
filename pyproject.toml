@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "streamlit-adjustable-columns"
+version = "0.2.1"
+description = "A Streamlit custom component for creating columns with adjustable widths"
+readme = "README.md"
+license = "MIT"
+authors = [
+    {name = "Daniel Jannai Epstein"}
+]
+maintainers = [
+    {name = "Daniel Jannai Epstein"}
+]
+keywords = ["streamlit", "columns", "resizable", "layout", "dashboard"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering :: Visualization",
+]
+requires-python = ">=3.9"
+dependencies = [
+    "streamlit>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "playwright>=1.30.0",
+    "requests>=2.25.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/danieljannai/streamlit-adjustable-columns"
+Repository = "https://github.com/danieljannai/streamlit-adjustable-columns"
+Documentation = "https://github.com/danieljannai/streamlit-adjustable-columns#readme"
+"Bug Tracker" = "https://github.com/danieljannai/streamlit-adjustable-columns/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[tool.setuptools.package-data]
+"streamlit_adjustable_columns" = ["frontend/build/*"]
+
+[tool.setuptools.dynamic]
+version = {attr = "streamlit_adjustable_columns.__version__"} 
