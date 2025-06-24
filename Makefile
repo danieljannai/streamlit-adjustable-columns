@@ -55,7 +55,7 @@ clean:
 	find . -type f -name "*.pyc" -delete
 
 build: clean
-	python setup.py sdist bdist_wheel
+	python -m build
 
 upload: build
 	twine upload dist/*
