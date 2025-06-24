@@ -228,8 +228,9 @@ def test_adjustable_columns_with_ratios():
 @pytest.mark.unit
 def test_adjustable_columns_return_widths():
     """Test return_widths functionality."""
-    with patch("streamlit_adjustable_columns.st.columns") as mock_columns, patch(
-        "streamlit_adjustable_columns.st.session_state", {}
+    with (
+        patch("streamlit_adjustable_columns.st.columns") as mock_columns,
+        patch("streamlit_adjustable_columns.st.session_state", {}),
     ):
 
         mock_col1, mock_col2, mock_col3 = (
@@ -252,12 +253,11 @@ def test_adjustable_columns_return_widths():
 @pytest.mark.unit
 def test_adjustable_columns_preserves_st_columns_params():
     """Test that st.columns parameters are preserved."""
-    with patch("streamlit_adjustable_columns.st.columns") as mock_columns, patch(
-        "streamlit_adjustable_columns._component_func"
-    ) as mock_component, patch(
-        "streamlit_adjustable_columns.st.session_state", {}
-    ), patch(
-        "streamlit_adjustable_columns.st.markdown"
+    with (
+        patch("streamlit_adjustable_columns.st.columns") as mock_columns,
+        patch("streamlit_adjustable_columns._component_func") as mock_component,
+        patch("streamlit_adjustable_columns.st.session_state", {}),
+        patch("streamlit_adjustable_columns.st.markdown"),
     ):
 
         mock_columns.return_value = [MagicMock(), MagicMock()]
@@ -300,8 +300,9 @@ def test_spec_validation():
 @pytest.mark.unit
 def test_session_state_key_generation():
     """Test that session state keys are generated correctly."""
-    with patch("streamlit_adjustable_columns.st.columns") as mock_columns, patch(
-        "streamlit_adjustable_columns.st.session_state", {}
+    with (
+        patch("streamlit_adjustable_columns.st.columns") as mock_columns,
+        patch("streamlit_adjustable_columns.st.session_state", {}),
     ):
 
         mock_columns.return_value = [MagicMock(), MagicMock()]
@@ -332,8 +333,9 @@ def test_labels_parameter():
 @pytest.mark.unit
 def test_width_ratios_calculation():
     """Test that width ratios are calculated correctly."""
-    with patch("streamlit_adjustable_columns.st.columns") as mock_columns, patch(
-        "streamlit_adjustable_columns.st.session_state", {}
+    with (
+        patch("streamlit_adjustable_columns.st.columns") as mock_columns,
+        patch("streamlit_adjustable_columns.st.session_state", {}),
     ):
 
         mock_columns.return_value = [MagicMock(), MagicMock(), MagicMock()]
@@ -354,10 +356,11 @@ def test_component_integration():
     with patch("streamlit_adjustable_columns._component_func") as mock_component:
         mock_component.return_value = {"widths": [1.0, 1.0, 1.0]}
 
-        with patch("streamlit_adjustable_columns.st.columns") as mock_columns, patch(
-            "streamlit_adjustable_columns.st.session_state", {}
-        ), patch("streamlit_adjustable_columns.st.markdown"), patch(
-            "streamlit_adjustable_columns.st.rerun"
+        with (
+            patch("streamlit_adjustable_columns.st.columns") as mock_columns,
+            patch("streamlit_adjustable_columns.st.session_state", {}),
+            patch("streamlit_adjustable_columns.st.markdown"),
+            patch("streamlit_adjustable_columns.st.rerun"),
         ):
 
             mock_columns.return_value = [
