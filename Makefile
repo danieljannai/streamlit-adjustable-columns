@@ -60,6 +60,9 @@ build: clean
 upload: build
 	twine upload dist/*
 
+upload-test: build
+	twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+
 # Version management
 bump-patch:
 	bump-my-version bump patch
